@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+        "http://struts.apache.org/dtds/struts-2.5.dtd">
+<struts>
+    <constant name="struts.devMode" value="true"/>
+    <constant name="struts.custom.i18n.resources" value="messages, error_messages,commons,xwork-conversion"/>
+    <constant name="struts.allowed.action.names" value="[a-zA-Z0-9_\-\/]+"/>
+    <constant name="struts.multipart.maxSize" value="16943040"/>
+    <constant name="struts.mapper.alwaysSelectFullNamespace" value="false"/>
+    <constant name="struts.enable.SlashesInActionNames" value="true"/>
+    <constant name="struts.patternMatcher" value="regex"/>
+    <constant name="struts.action.extension" value=",json,xml,action"/>
+    <constant name="struts.enable.DynamicMethodInvocation" value="false"/>
+    <!-- Our goal here is to exclude 'static' content that we don't want Struts worrying about -->
+    <constant name="struts.action.excludePattern" value="/([a-zA-Z0-9\-_]*sitemap\.xml|robots\.txt)"/>
+    <!-- This points struts to our JSONWriter instead of theirs -->
+    <bean type="org.apache.struts2.json.JSONWriter" name="BetterJsonWriter"
+          class="local.rdps.svja.util.BetterJsonWriter"/>
+    <constant name="struts.json.writer" value="BetterJsonWriter"/>
+
+    <!-- Default Package for SVJA functions -->
+    <package name="default" extends="json-default" namespace="/">
+        <result-types>
+            <!-- Overwriting the json plugin in order to add OGNL support in its parameters -->
+            <result-type name="json" class="local.rdps.svja.util.ExtendedJsonResult"/>
+        </result-types>
+        <interceptors>
+            <interceptor name="finalizerInterceptor" class="local.rdps.svja.action.interceptor.FinalizerInterceptor"/>
+            <interceptor name="parameterSanitizerInterceptor"
+                         class="local.rdps.svja.action.interceptor.ParameterSanitizerInterceptor"/>
+
+            <!-- API Interceptors -->
+            <interceptor name="jsonErrorInterceptor" class="local.rdps.svja.action.interceptor.JsonErrorInterceptor"/>
+            <interceptor name="restInterceptor" class="local.rdps.svja.action.interceptor.RestInterceptor"/>
+
+            <!--
+                This is the base stack for API actions
+             -->
+            <interceptor-stack name="baseStack">
+                <interceptor-ref name="jsonErrorInterceptor"/>
+                <interceptor-ref name="parameterSanitizerInterceptor"/>
+                <interceptor-ref name="json">
+                    <param name="enableSMD">true</param>
+                </interceptor-ref>
+                <interceptor-ref name="defaultStack">
+                    <!-- Enable exception logging. -->
+                    <param name="exception.logEnabled">true</param>
+                    <param name="exception.logLevel">ERROR</param>
+                </interceptor-ref>
+                <interceptor-ref name="restInterceptor"/>
+                <interceptor-ref name="finalizerInterceptor"/>
+            </interceptor-stack>
+            <interceptor-stack name="fileStack">
+                <interceptor-ref name="jsonErrorInterceptor"/>
+                <interceptor-ref name="parameterSanitizerInterceptor"/>
+                <interceptor-ref name="defaultStack">
+                    <!-- Enable exception logging. -->
+                    <param name="exception.logEnabled">true</param>
+                    <param name="exception.logLevel">ERROR</param>
+                </interceptor-ref>
+                <interceptor-ref name="restInterceptor"/>
+                <interceptor-ref name="finalizerInterceptor"/>
+            </interceptor-stack>
+        </interceptors>
+        <default-interceptor-ref name="baseStack"/>
+        <default-action-ref name="unknownHandler"/>
+
+        <!-- GLOBAL RESULT PAGE MAPPING START -->
+        <global-results>
+            <!-- Pre-formatted json string results. -->
+            <result name="json-result" type="json">
+                <param name="noCache">true</param>
+                <param name="root">jsonObject</param>
+            </result>
+            <result name="spec" type="json">
+                <param name="noCache">true</param>
+                <param name="root">spec</param>
+            </result>
+            <!-- Json Plugin Results -->
+            <result name="success" type="json">
+                <param name="noCache">true</param>
+            </result>
+            <result name="redirect" type="redirect">
+                <param name="location">${redirectUrl}</param>
+                <param name="statusCode">303</param>
+            </result>
+            <!-- File Download -->
+            <result name="downloadFile" type="stream">
+                <param name="contentType">${downloadVO.contentType}</param>
+                <param name="inputName">downloadVO.inputStream</param>
+                <param name="contentDisposition">attachment;filename="${downloadVO.documentName}"</param>
+                <param name="bufferSize">1048576</param>
+            </result>
+            <!-- Catch Exceptions and Handle Errors -->
+            <result name="exception" type="json">
+                <param name="statusCode">${exception.exceptionStatusCode}</param>
+                <param name="noCache">true</param>
+                <param name="root">error</param>
+            </result>
+        </global-results>
+
+        <!-- Mapping for unknown action handler -->
+        <action name="unknownHandler" method="handleUnknownRequest" class="local.rdps.svja.action.BaseAction"/>
+
+        <!-- Project Actions -->
+        <action name="api/projects" class="local.rdps.svja.action.ProjectsAction"/>
+        <action name="api/projects/{projectId:[0-9]+}" class="local.rdps.svja.action.ProjectsAction"/>
+    </package>
+</struts>

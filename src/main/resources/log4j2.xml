@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appenders>
+        <!-- by this appender we will have the log files each day -->
+        <RollingRandomAccessFile name="ROLL" fileName="${sys:catalina.home}/logs/svja.log" filePattern="${sys:catalina.home}/logs/svja.%d{yyyy-MM-dd}.log" >
+            <PatternLayout>
+                <pattern>%d{dd MMM yyyy,HH:mm:ss} %X{HOST} %X{IP} %X{REQUEST_PATH} %p [%F:%M():%L] - %m%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingRandomAccessFile>
+    </Appenders>
+    <Loggers>
+        <Logger name="com.opensymphony.xwork2.ognl.OgnlValueStack" level="warn">
+            <AppenderRef ref="ROLL"/>
+        </Logger>
+        <Logger name="com.opensymphony.xwork2.util.OgnlUtil" level="warn">
+            <AppenderRef ref="ROLL"/>
+        </Logger>
+        <Logger name="org.apache.struts2" level="warn">
+            <AppenderRef ref="ROLL"/>
+        </Logger>
+        <Root level="info">
+            <AppenderRef ref="ROLL"/>
+        </Root>
+    </Loggers>
+</Configuration>
