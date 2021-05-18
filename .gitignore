@@ -1,6 +1,7 @@
 /bin/
 /src/main/frontend/build/
 /src/main/frontend/coverage/
+/src/main/frontend/node/
 /src/main/frontend/node_modules/
 /src/main/frontend/.pnp
 /target/
@@ -13,7 +14,6 @@
 .env.test.local
 .env.production.local
 
-package-lock.json
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

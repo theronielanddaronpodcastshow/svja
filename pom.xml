@@ -262,8 +262,8 @@
                     <artifactId>frontend-maven-plugin</artifactId>
                     <version>1.11.3</version>
                     <configuration>
-                        <nodeVersion>v10.0.0</nodeVersion>
-                        <npmVersion>6.1.0</npmVersion>
+                        <nodeVersion>v14.2.0</nodeVersion>
+                        <npmVersion>7.11.0</npmVersion>
                         <workingDirectory>src/main/frontend</workingDirectory>
                     </configuration>
                     <executions>
@@ -274,16 +274,21 @@
                             </goals>
                         </execution>
                         <execution>
-                            <id>npm install</id>
+                            <id>Run npm audit</id>
                             <goals>
                                 <goal>npm</goal>
                             </goals>
+                            <phase>generate-resources</phase>
+                            <configuration>
+                                <arguments>audit fix</arguments>
+                            </configuration>
                         </execution>
                         <execution>
                             <id>Build frontend</id>
                             <goals>
                                 <goal>npm</goal>
                             </goals>
+                            <phase>compile</phase>
                             <configuration>
                                 <arguments>run build</arguments>
                             </configuration>
