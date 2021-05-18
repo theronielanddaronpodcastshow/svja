@@ -1,3 +1,4 @@
+# Application-specific excludes
 /bin/
 /src/main/frontend/build/
 /src/main/frontend/coverage/
@@ -6,14 +7,53 @@
 /src/main/frontend/.pnp
 /target/
 
-# misc
+# Random junk that we don't want and can be sensitive
+*~
+.directory
 .pnp.js
 .DS_Store
+.DS_Store?
+**/.DS_Store
+*.swp
+._*
+*~.nib
+.Trashes
+.Spotlight-V100
+ehthumbs.db
+Thumbs.db
+Desktop.ini
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+.csettings
+/libs/openFrameworksCompiled/project/android/paths.make
 
+# We don't want backup or log data
+*.sql
+*.log
+*.bak
+
+# Compressed files
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.war
+*.zip
+
+# Compiled sources
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# NPM/yarn logs
 npm-debug.log*
 yarn-debug.log*
-yarn-error.log*
+yarn-error.log
