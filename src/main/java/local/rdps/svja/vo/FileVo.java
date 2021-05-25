@@ -30,7 +30,7 @@ public class FileVo extends ItemVo {
 	/**
 	 * The file in question's path and name
 	 */
-	private @Nullable String file;
+	private static @Nullable String file;
 
 	/**
 	 * <p>
