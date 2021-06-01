@@ -26,7 +26,7 @@ import local.rdps.svja.util.ValidationUtils;
 
 /**
  * <p>
- * This class is the primer workhorse any request that is going to the database.
+ * This class is the primer workhorse for any request that is going to the database.
  * </p>
  *
  * @author DaRon
