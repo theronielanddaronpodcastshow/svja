@@ -66,6 +66,25 @@ public class PermissionsVo extends ItemVo {
 	}
 
 	/**
+	 * Default constructor -- does nothing special
+	 */
+	public PermissionsVo() {
+		super(null);
+	}
+
+	/**
+	 * <p>
+	 * This constructor creates a new instance, setting the instance's entity ID to that provided.
+	 * </p>
+	 *
+	 * @param entityId
+	 *            The ID of the entity
+	 */
+	public PermissionsVo(@Nullable final Long entityId) {
+		super(entityId);
+	}
+
+	/**
 	 * <p>
 	 * This method returns whether or not the user has permission to administer this application.
 	 * </p>

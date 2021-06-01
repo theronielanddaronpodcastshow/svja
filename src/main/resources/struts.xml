@@ -102,8 +102,8 @@
         <!-- Mapping for unknown action handler -->
         <action name="unknownHandler" method="handleUnknownRequest" class="local.rdps.svja.action.BaseAction"/>
 
-        <!-- Project Actions -->
+        <!-- General Actions -->
+        <action name="api/files" class="local.rdps.svja.action.FilesAction"/>
         <action name="api/projects" class="local.rdps.svja.action.ProjectsAction"/>
-        <action name="api/projects/{projectId:[0-9]+}" class="local.rdps.svja.action.ProjectsAction"/>
     </package>
 </struts>

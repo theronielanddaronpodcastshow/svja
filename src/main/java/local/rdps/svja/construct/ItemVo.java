@@ -42,6 +42,18 @@ public abstract class ItemVo {
 
 	/**
 	 * <p>
+	 * Creates a new instance using the given ID.
+	 * </p>
+	 *
+	 * @param id
+	 *            The ID of the instance
+	 */
+	public ItemVo(final Long id) {
+		this.id = id;
+	}
+
+	/**
+	 * <p>
 	 * This method returns the item's ID for this specific instance.
 	 * </p>
 	 *

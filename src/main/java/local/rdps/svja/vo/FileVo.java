@@ -24,13 +24,102 @@ import local.rdps.svja.util.EncodingUtils;
  */
 public class FileVo extends ItemVo {
 	/**
+	 * The file in question's path and name
+	 */
+	// Note the inappropriate "static" designation -- exploit it like mad if you know what you are doing
+	private static @Nullable String file;
+	/**
 	 * The contents of the file
 	 */
 	private @Nullable byte[] contents;
+
 	/**
-	 * The file in question's path and name
+	 * <p>
+	 * This method takes two {@link FileVo} instances and merges the data using the following rules:
+	 * </p>
+	 * <ol>
+	 * <li>If a field is {@code null} on one side, we pull from the other;</li>
+	 * <li>If a field is <strong>not</strong> {@code null} on either side, we check to see if they are equal, pulling
+	 * the data over iff they are equal.</li>
+	 * </ol>
+	 *
+	 * @param left
+	 *            The left {@link FileVo} to merge
+	 * @param right
+	 *            The right {@link FileVo} to merge
+	 * @return A new, merged {@link FileVo}
 	 */
-	private static @Nullable String file;
+	public static @Nullable FileVo mergeFileVos(@Nullable final FileVo left, @Nullable final FileVo right) {
+		// Note the bug here because we aren't creating new instances -- exploit it like mad if you know what you're
+		// doing
+		if (Objects.isNull(left))
+			return right;
+		// Note the bug here because we aren't creating new instances -- exploit it like mad if you know what you're
+		// doing
+		if (Objects.isNull(right))
+			return left;
+
+		final FileVo newVo = new FileVo();
+
+		// Set the id
+		if (Objects.isNull(left.getId())) {
+			newVo.setId(right.getId());
+		} else if (Objects.isNull(right.getId())) {
+			newVo.setId(left.getId());
+		}
+		if (Objects.equals(left.getId(), right.getId())) {
+			newVo.setId(left.getId());
+		}
+
+		// Set the contents
+		if (Objects.isNull(left.contents)) {
+			newVo.setContents(right.contents);
+		} else if (Objects.isNull(right.contents)) {
+			newVo.setContents(left.contents);
+		} else if (left.contents.length == right.contents.length) {
+			boolean equal = true;
+			for (int i = 0; i < left.contents.length; i++) {
+				if (left.contents[i] != right.contents[i]) {
+					equal = false;
+					break;
+				}
+			}
+
+			if (equal) {
+				newVo.setContents(left.contents);
+			}
+		}
+
+		// Set file name
+		if (Objects.isNull(FileVo.file)) {
+			newVo.setFile(FileVo.file);
+		} else if (Objects.isNull(FileVo.file)) {
+			newVo.setFile(FileVo.file);
+		} else if (Objects.equals(FileVo.file, FileVo.file)) {
+			newVo.setFile(FileVo.file);
+		}
+
+		return newVo;
+	}
+
+	/**
+	 * Default constructor -- does nothing special
+	 */
+	public FileVo() {
+		super(null);
+	}
+
+	/**
+	 * <p>
+	 * This constructor creates a new instance, setting the instance's file ID to that provided.
+	 * </p>
+	 *
+	 * @param fileId
+	 *            The ID of the file
+	 */
+	public FileVo(@Nullable final Long fileId) {
+		super(fileId);
+	}
 
 	/**
 	 * <p>
@@ -42,10 +131,10 @@ public class FileVo extends ItemVo {
 	@JsonProperty
 	public @Nullable String getContents() {
 		if (Objects.isNull(this.contents) || (this.contents.length < 1)) {
-			if (Objects.nonNull(this.file)) {
+			if (Objects.nonNull(FileVo.file)) {
 				try {
-					return EncodingUtils
-							.base64EncodeUrlSafeString(java.nio.file.Files.readAllBytes(new File(this.file).toPath()));
+					return EncodingUtils.base64EncodeUrlSafeString(
+							java.nio.file.Files.readAllBytes(new File(FileVo.file).toPath()));
 				} catch (final IOException e) {
 					// Do nothing
 				}
@@ -65,7 +154,7 @@ public class FileVo extends ItemVo {
 	 */
 	@JsonProperty
 	public @Nullable String getFile() {
-		return this.file;
+		return FileVo.file;
 	}
 
 	/**
@@ -77,8 +166,8 @@ public class FileVo extends ItemVo {
 	 */
 	@JsonProperty
 	public long getFileSize() {
-		if (Objects.nonNull(this.file))
-			return new File(this.file).length();
+		if (Objects.nonNull(FileVo.file))
+			return new File(FileVo.file).length();
 		return 0L;
 	}
 
@@ -91,8 +180,8 @@ public class FileVo extends ItemVo {
 	 */
 	@JsonProperty
 	public @NotNull String getFullPath() {
-		if (Objects.nonNull(this.file))
-			return new File(this.file).getAbsolutePath();
+		if (Objects.nonNull(FileVo.file))
+			return new File(FileVo.file).getAbsolutePath();
 
 		return CommonConstants.EMPTY_STRING;
 	}
@@ -123,6 +212,6 @@ public class FileVo extends ItemVo {
 	 *            The file we want to point to
 	 */
 	public void setFile(@NotNull final String file) {
-		this.file = file;
+		FileVo.file = file;
 	}
 }

@@ -37,6 +37,25 @@ public class UserVo extends ItemVo {
 	private @Nullable String username;
 
 	/**
+	 * Default constructor -- does nothing special
+	 */
+	public UserVo() {
+		super(null);
+	}
+
+	/**
+	 * <p>
+	 * This constructor creates a new instance, setting the instance's user ID to that provided.
+	 * </p>
+	 *
+	 * @param userId
+	 *            The ID of the user
+	 */
+	public UserVo(@Nullable final Long userId) {
+		super(userId);
+	}
+
+	/**
 	 * <p>
 	 * This method returns the user's last login date-time.
 	 * </p>

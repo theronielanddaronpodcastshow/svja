@@ -15,21 +15,33 @@ import local.rdps.svja.dao.CommonDaoGateway;
 import local.rdps.svja.dao.PermissionsDaoGateway;
 import local.rdps.svja.exception.ApplicationException;
 import local.rdps.svja.util.ValidationUtils;
+import local.rdps.svja.vo.FileVo;
 import local.rdps.svja.vo.PermissionsVo;
-import local.rdps.svja.vo.ProjectVo;
 import local.rdps.svja.vo.UserVo;
 
 /**
  * <p>
- * This class represents what it means to be a project and an action... not much, it seems.
+ * This class represents what it means to be a file and an action... not much, it seems.
  * </p>
  *
  * @author DaRon
  * @since 1.0
  */
-public class ProjectsAction extends RestAction {
+public class FilesAction extends RestAction {
 	private static final Logger logger = LogManager.getLogger();
 	private static final long serialVersionUID = 1000000L;
+	/**
+	 * The file that we want to return to the user
+	 */
+	private FileVo file;
+	/**
+	 * The ID of the file that we are looking for or working with
+	 */
+	private Long fileId;
+	/**
+	 * The files that we want to return to the user
+	 */
+	private Collection<FileVo> files;
 	/**
 	 * Stores whether or not we have passed the basic conditions necessary for any request to this action, if set,
 	 * otherwise indicates that the basic conditions have not been checked.
@@ -39,18 +51,6 @@ public class ProjectsAction extends RestAction {
 	 * The current user's permissions
 	 */
 	private PermissionsVo permissions;
-	/**
-	 * The project that we want to return to the user
-	 */
-	private ProjectVo project;
-	/**
-	 * The ID of the project that we are looking for or working with
-	 */
-	private Long projectId;
-	/**
-	 * The projects that we want to return to the user
-	 */
-	private Collection<ProjectVo> projects;
 
 	/**
 	 * <p>
@@ -77,52 +77,52 @@ public class ProjectsAction extends RestAction {
 
 	@Override
 	public String create() throws ApplicationException {
-		// this.project.setDirtyFields(super.getRequestKeysForRootNode(Project.class.getSimpleName()));
-		// final Optional<Project> newProject = CommonWriteDAOGateway.insertUpdateItem(this.project);
-		// if (newProject.isPresent()) {
-		// this.project = newProject.get();
-		// this.projectId = this.project.getProjectId();
+		// this.file.setDirtyFields(super.getRequestKeysForRootNode(FileVo.class.getSimpleName()));
+		// final Optional<FileVo> newFileVo = CommonWriteDAOGateway.insertUpdateItem(this.file);
+		// if (newFileVo.isPresent()) {
+		// this.file = newFileVo.get();
+		// this.fileId = this.file.getFileVoId();
 		// }
 		return ResultConstants.RESULT_SUCCESS;
 	}
 
 	@JsonProperty
-	public ProjectVo getProject() {
-		if (Objects.nonNull(this.project) && ValidationUtils.not(ValidationUtils.isId(this.project.getId()))) {
-			this.project.setId(this.projectId);
+	public FileVo getFile() {
+		if (Objects.nonNull(this.file) && ValidationUtils.not(ValidationUtils.isId(this.file.getId()))) {
+			this.file.setId(this.fileId);
 		}
-		return this.project;
+		return this.file;
 	}
 
 	@JsonProperty
-	public Long getProjectId() {
-		if (ValidationUtils.not(ValidationUtils.isId(this.projectId))) {
-			if (Objects.nonNull(this.project)) {
-				this.projectId = this.project.getId();
+	public Long getFileId() {
+		if (ValidationUtils.not(ValidationUtils.isId(this.fileId))) {
+			if (Objects.nonNull(this.file)) {
+				this.fileId = this.file.getId();
 			}
 		}
 
-		return this.projectId;
+		return this.fileId;
 	}
 
 	@JsonProperty
-	public Collection<ProjectVo> getProjects() {
-		return this.projects;
+	public Collection<FileVo> getFiles() {
+		return this.files;
 	}
 
 	@Override
 	public String index() throws ApplicationException {
-		this.projects = CommonDaoGateway.getItems(new ProjectVo());
+		this.files = CommonDaoGateway.getItems(new FileVo());
 		return ResultConstants.RESULT_SUCCESS;
 	}
 
 	@Override
 	public boolean isIdSet() {
-		return ValidationUtils.isId(this.projectId);
+		return ValidationUtils.isId(this.fileId);
 	}
 
 	/**
-	 * @return {@code true} iff {@link ProjectsAction#passesBasicConditions()} returns {@code true} and the user is
+	 * @return {@code true} iff {@link FileVosAction#passesBasicConditions()} returns {@code true} and the user is
 	 *         allowed to edit this item type
 	 */
 	@Override
@@ -139,7 +139,7 @@ public class ProjectsAction extends RestAction {
 	}
 
 	/**
-	 * @return {@code true} iff {@link ProjectsAction#passesBasicConditions()} returns {@code true}
+	 * @return {@code true} iff {@link FileVosAction#passesBasicConditions()} returns {@code true}
 	 */
 	@Override
 	public boolean mayIndex() throws ApplicationException {
@@ -151,7 +151,7 @@ public class ProjectsAction extends RestAction {
 	}
 
 	/**
-	 * @return {@code true} iff {@link ProjectsAction#passesBasicConditions()} returns {@code true}
+	 * @return {@code true} iff {@link FileVosAction#passesBasicConditions()} returns {@code true}
 	 */
 	@Override
 	public boolean mayShow() throws ApplicationException {
@@ -163,7 +163,7 @@ public class ProjectsAction extends RestAction {
 	}
 
 	/**
-	 * @return {@code true} iff {@link ProjectsAction#passesBasicConditions()} returns {@code true} and the user is
+	 * @return {@code true} iff {@link FileVosAction#passesBasicConditions()} returns {@code true} and the user is
 	 *         allowed to edit this item type
 	 */
 	@Override
@@ -179,43 +179,43 @@ public class ProjectsAction extends RestAction {
 		return getPermissions().getMayWrite();
 	}
 
-	public void setProject(final ProjectVo project) {
-		if (Objects.nonNull(project)) {
-			this.project = project;
+	public void setFile(final FileVo file) {
+		if (Objects.nonNull(file)) {
+			this.file = file;
 		}
 	}
 
-	public void setProjectId(final Long projectId) {
-		if (ValidationUtils.isId(projectId)) {
-			this.projectId = projectId;
+	public void setFileId(final Long fileId) {
+		if (ValidationUtils.isId(fileId)) {
+			this.fileId = fileId;
 		}
 	}
 
-	public void setProjects(final List<ProjectVo> projects) {
-		this.projects = projects;
+	public void setFiles(final List<FileVo> files) {
+		this.files = files;
 	}
 
 	@Override
 	public String show() throws ApplicationException {
-		if (Objects.nonNull(this.projects)) {
-			ProjectsAction.logger.error("Our Projects was of size {}", this.projects.size());
+		if (Objects.nonNull(this.files)) {
+			FilesAction.logger.error("Our FileVos was of size {}", this.files.size());
 		}
-		final ProjectVo proj = new ProjectVo(this.projectId);
-		ProjectsAction.logger.info("Our projectId is {} and our project ID is {}", this.projectId, proj.getId());
-		this.project = CommonDaoGateway.getItems(proj).stream().findFirst().orElse(null);
+		final FileVo file = new FileVo(this.fileId);
+		FilesAction.logger.info("Our fileId is {} and our file ID is {}", this.fileId, file.getId());
+		this.file = CommonDaoGateway.getItems(file).stream().findFirst().orElse(null);
 		return ResultConstants.RESULT_SUCCESS;
 	}
 
 	@Override
 	public String update() throws ApplicationException {
-		// this.project.setDirtyFields(super.getRequestKeysForRootNode(Project.class.getSimpleName()));
+		// this.file.setDirtyFields(super.getRequestKeysForRootNode(FileVo.class.getSimpleName()));
 		// if (isIdSet()) {
-		// this.project.setProjectId(this.projectId);
+		// this.file.setFileVoId(this.fileId);
 		// }
-		// CommonWriteDAOGateway.insertUpdateItem(this.project);
-		// if (!ValidationUtils.isEmpty(this.project.getReferences())) {
-		// for (final ProjectReference reference : this.project.getReferences()) {
-		// reference.setProjectId(this.projectId);
+		// CommonWriteDAOGateway.insertUpdateItem(this.file);
+		// if (!ValidationUtils.isEmpty(this.file.getReferences())) {
+		// for (final FileVoReference reference : this.file.getReferences()) {
+		// reference.setFileVoId(this.fileId);
 		// CommonWriteDAOGateway.insertUpdateItem(reference);
 		// }
 		// }

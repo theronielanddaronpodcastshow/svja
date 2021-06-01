@@ -31,6 +31,25 @@ public class ProjectVo extends ItemVo {
 	private @Nullable String title;
 
 	/**
+	 * Default constructor -- does nothing special
+	 */
+	public ProjectVo() {
+		super(null);
+	}
+
+	/**
+	 * <p>
+	 * This constructor creates a new instance, setting the instance's project ID to that provided.
+	 * </p>
+	 *
+	 * @param projectId
+	 *            The ID of the project
+	 */
+	public ProjectVo(@Nullable final Long projectId) {
+		super(projectId);
+	}
+
+	/**
 	 * <p>
 	 * This method returns the project's description.
 	 * </p>
