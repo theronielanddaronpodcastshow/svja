@@ -44,7 +44,6 @@ public class JsonErrorInterceptor implements Interceptor {
 				final Exception e = (Exception) invocation.getStack().findValue("exception");
 				final RestAction action = (RestAction) invocation.getAction();
 				JsonErrorInterceptor.processException(action, e);
-				// invocation.setResultCode(ResultConstants.RESULT_ERROR_JSON);
 			}
 		}
 	}
@@ -66,9 +65,9 @@ public class JsonErrorInterceptor implements Interceptor {
 	 * @return
 	 */
 	private static JsonErrorVo createJsonErrorObject(final Exception e) {
-		return e instanceof local.rdps.svja.exception.ApplicationException
-				? new JsonErrorVo(((local.rdps.svja.exception.ApplicationException) e).getExceptionStatusCode(),
-						((local.rdps.svja.exception.ApplicationException) e).getUiMessage())
+		return e instanceof ApplicationException
+				? new JsonErrorVo(((ApplicationException) e).getExceptionStatusCode(),
+						((ApplicationException) e).getUiMessage())
 				: e instanceof ApplicationException
 						? new JsonErrorVo(((ApplicationException) e).getExceptionStatusCode(), "")
 						// could throw an ApplicationException here to wrap any non-ApplicationException
@@ -140,7 +139,7 @@ public class JsonErrorInterceptor implements Interceptor {
 	 */
 	private static void processException(final BaseAction action, final Exception e) {
 		final ApplicationException error = e instanceof ApplicationException ? (ApplicationException) e
-				: new local.rdps.svja.exception.ApplicationException(e.getMessage(), e);
+				: new ApplicationException(e.getMessage(), e);
 
 		// log the exception
 		JsonErrorInterceptor.logExceptionData(error);
@@ -154,7 +153,7 @@ public class JsonErrorInterceptor implements Interceptor {
 	 */
 	private static void processException(final RestAction action, final Exception e) {
 		final ApplicationException error = e instanceof ApplicationException ? (ApplicationException) e
-				: new local.rdps.svja.exception.ApplicationException(e.getMessage(), e);
+				: new ApplicationException(e.getMessage(), e);
 
 		// log the exception
 		JsonErrorInterceptor.logExceptionData(error);
@@ -186,7 +185,7 @@ public class JsonErrorInterceptor implements Interceptor {
 					: (e instanceof JSONException) || (e instanceof NumberFormatException)
 							? new IllegalParameterException(e.getMessage(), e)
 							// wrap all other exceptions as an application exception
-							: new local.rdps.svja.exception.ApplicationException(e.getMessage(), e);
+							: new ApplicationException(e.getMessage(), e);
 			// add exception reference to the front-end
 			invocation.getStack().push(new ExceptionHolder(error));
 			final Object action = invocation.getAction();
