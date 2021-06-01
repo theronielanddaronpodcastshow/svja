@@ -1,5 +1,7 @@
 package local.rdps.svja.blo;
 
+import java.util.Objects;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,6 +20,28 @@ import local.rdps.svja.vo.FileVo;
  * @since 1.0
  */
 public class FilesBloGateway {
+	/**
+	 * <p>
+	 * This method grabs the given file and file data from the file system and database. This method searches for the
+	 * file using the file id, if set in the given {@link FileVo}, or the file name, if the ID isn't set but the name
+	 * is.
+	 * </p>
+	 *
+	 * @param file
+	 *            A {@link FileVo} with either the file id or file name set
+	 * @return A filled in {@link FileVo}
+	 * @throws IllegalParameterException
+	 *             If the file name is invalid
+	 */
+	public static @Nullable FileVo getFile(@NotNull final FileVo file) throws ApplicationException {
+		if (Objects.isNull(file))
+			throw new IllegalParameterException("The FileVo is null");
+
+		// If we have the file id, use that, otherwise use the file name; merge the VO when done to "save time"
+		return FileVo.mergeFileVos(file, ValidationUtils.isId(file.getId()) ? FilesBloGateway.getFile(file.getId())
+				: FilesBloGateway.getFile(file.getFile()));
+	}
+
 	/**
 	 * <p>
 	 * This method grabs the given file and file data from the file system and database. This method searches for the

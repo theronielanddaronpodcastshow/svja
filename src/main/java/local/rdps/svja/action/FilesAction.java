@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import local.rdps.svja.blo.FilesBloGateway;
 import local.rdps.svja.constant.ResultConstants;
 import local.rdps.svja.dao.CommonDaoGateway;
 import local.rdps.svja.dao.PermissionsDaoGateway;
@@ -38,6 +39,10 @@ public class FilesAction extends RestAction {
 	 * The ID of the file that we are looking for or working with
 	 */
 	private Long fileId;
+	/**
+	 * The name of the file that we are looking for or working with
+	 */
+	private String fileName;
 	/**
 	 * The files that we want to return to the user
 	 */
@@ -106,6 +111,17 @@ public class FilesAction extends RestAction {
 	}
 
 	@JsonProperty
+	public String getFileName() {
+		if (ValidationUtils.not(ValidationUtils.isEmpty(this.fileName))) {
+			if (Objects.nonNull(this.file)) {
+				this.fileName = this.file.getFile();
+			}
+		}
+
+		return this.fileName;
+	}
+
+	@JsonProperty
 	public Collection<FileVo> getFiles() {
 		return this.files;
 	}
@@ -118,7 +134,7 @@ public class FilesAction extends RestAction {
 
 	@Override
 	public boolean isIdSet() {
-		return ValidationUtils.isId(this.fileId);
+		return ValidationUtils.isId(this.fileId) || ValidationUtils.not(ValidationUtils.isEmpty(this.fileName));
 	}
 
 	/**
@@ -191,6 +207,12 @@ public class FilesAction extends RestAction {
 		}
 	}
 
+	public void setFileName(final String fileName) {
+		if (ValidationUtils.not(ValidationUtils.isEmpty(fileName))) {
+			this.fileName = fileName;
+		}
+	}
+
 	public void setFiles(final List<FileVo> files) {
 		this.files = files;
 	}
@@ -201,8 +223,11 @@ public class FilesAction extends RestAction {
 			FilesAction.logger.error("Our FileVos was of size {}", this.files.size());
 		}
 		final FileVo file = new FileVo(this.fileId);
+		file.setFile(this.fileName);
 		FilesAction.logger.info("Our fileId is {} and our file ID is {}", this.fileId, file.getId());
-		this.file = CommonDaoGateway.getItems(file).stream().findFirst().orElse(null);
+		FilesAction.logger.info("Our fileName is {} and our file name is {}", this.fileName, file.getFile());
+
+		this.file = FilesBloGateway.getFile(file);
 		return ResultConstants.RESULT_SUCCESS;
 	}
 
