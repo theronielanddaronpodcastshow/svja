@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import local.rdps.svja.dao.CommonDaoGateway;
 import local.rdps.svja.exception.ApplicationException;
-import local.rdps.svja.vo.User;
+import local.rdps.svja.vo.UserVo;
 
 /**
  * <p>
@@ -34,7 +34,7 @@ public abstract class ItemVo {
 	/**
 	 * The user who last made the modification
 	 */
-	private @Nullable User modifiedByUser;
+	private @Nullable UserVo modifiedByUser;
 	/**
 	 * When the item was last modified
 	 */
@@ -77,10 +77,10 @@ public abstract class ItemVo {
 	 * @return The ID of the last user to modify the item
 	 */
 	@JsonProperty
-	public final @Nullable User getModifiedByUser() throws ApplicationException {
+	public final @Nullable UserVo getModifiedByUser() throws ApplicationException {
 		if (Objects.isNull(this.modifiedByUser)) {
 			if (Objects.nonNull(this.modifiedBy)) {
-				final User user = new User();
+				final UserVo user = new UserVo();
 				user.setId(this.modifiedBy);
 				this.modifiedByUser = CommonDaoGateway.getItems(user).stream().findFirst().orElse(null);
 			}

@@ -18,7 +18,7 @@ import local.rdps.svja.util.ValidationUtils;
  * @author DaRon
  * @since 1.0
  */
-public class Permissions extends ItemVo {
+public class PermissionsVo extends ItemVo {
 	/**
 	 * Whether or not the user should be able to perform administrative actions
 	 */
@@ -28,13 +28,13 @@ public class Permissions extends ItemVo {
 	 */
 	private Boolean mayWrite;
 	/**
-	 * The {@link User} that these permissions pertain to
+	 * The {@link UserVo} that these permissions pertain to
 	 */
-	private User user;
+	private UserVo user;
 
 	/**
 	 * <p>
-	 * This method takes two {@link Permissions} instances and merges the permissions, taking the highest level
+	 * This method takes two {@link PermissionsVo} instances and merges the permissions, taking the highest level
 	 * permissions from the group and returns a new instance. Please note that the id is never set.
 	 * </p>
 	 *
@@ -44,8 +44,8 @@ public class Permissions extends ItemVo {
 	 *            The second instance
 	 * @return A new, merged instance
 	 */
-	public static Permissions mergePermissions(final @Nullable Permissions p1, final @Nullable Permissions p2) {
-		final Permissions mergedPermissions = new Permissions();
+	public static PermissionsVo mergePermissions(final @Nullable PermissionsVo p1, final @Nullable PermissionsVo p2) {
+		final PermissionsVo mergedPermissions = new PermissionsVo();
 		if (Objects.isNull(p1)) {
 			if (Objects.isNull(p2))
 				return mergedPermissions;
@@ -103,14 +103,14 @@ public class Permissions extends ItemVo {
 
 	/**
 	 * <p>
-	 * This method returns the {@link User} in question. Alternatively, {@link #getId()} will return the user's ID.
+	 * This method returns the {@link UserVo} in question. Alternatively, {@link #getId()} will return the user's ID.
 	 * </p>
 	 *
-	 * @return The {@link User} that these permissions pertain to
+	 * @return The {@link UserVo} that these permissions pertain to
 	 */
-	public User getUser() {
+	public UserVo getUser() {
 		if (Objects.isNull(this.user) && ValidationUtils.isId(super.getId())) {
-			final User u = new User();
+			final UserVo u = new UserVo();
 			u.setId(super.getId());
 			try {
 				this.user = CommonDaoGateway.getItems(u).stream().findFirst().orElse(null);
@@ -147,13 +147,13 @@ public class Permissions extends ItemVo {
 
 	/**
 	 * <p>
-	 * This method sets the {@link User} in question and will update the result of {@link #getId()}. Alternatively, if
+	 * This method sets the {@link UserVo} in question and will update the result of {@link #getId()}. Alternatively, if
 	 * you set the id, we will pick up for {@link #getUser()}.
 	 * </p>
 	 *
-	 * @return The {@link User} that these permissions pertain to
+	 * @return The {@link UserVo} that these permissions pertain to
 	 */
-	public void setUser(final User user) {
+	public void setUser(final UserVo user) {
 		if (Objects.nonNull(user)) {
 			super.setId(user.getId());
 		} else {

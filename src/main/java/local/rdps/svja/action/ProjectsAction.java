@@ -1,23 +1,21 @@
 package local.rdps.svja.action;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import local.rdps.svja.constant.ResultConstants;
 import local.rdps.svja.dao.CommonDaoGateway;
 import local.rdps.svja.dao.PermissionsDaoGateway;
 import local.rdps.svja.exception.ApplicationException;
 import local.rdps.svja.util.ValidationUtils;
-import local.rdps.svja.vo.Permissions;
-import local.rdps.svja.vo.Project;
-import local.rdps.svja.vo.User;
+import local.rdps.svja.vo.PermissionsVo;
+import local.rdps.svja.vo.ProjectVo;
+import local.rdps.svja.vo.UserVo;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * <p>
@@ -38,11 +36,11 @@ public class ProjectsAction extends RestAction {
 	/**
 	 * The current user's permissions
 	 */
-	private Permissions permissions;
+	private PermissionsVo permissions;
 	/**
 	 * The project that we want to return to the user
 	 */
-	private Project project;
+	private ProjectVo project;
 	/**
 	 * The ID of the project that we are looking for or working with
 	 */
@@ -50,7 +48,7 @@ public class ProjectsAction extends RestAction {
 	/**
 	 * The projects that we want to return to the user
 	 */
-	private Collection<Project> projects;
+	private Collection<ProjectVo> projects;
 
 	/**
 	 * <p>
@@ -59,18 +57,18 @@ public class ProjectsAction extends RestAction {
 	 *
 	 * @return The user's permissions
 	 */
-	private Permissions getPermissions() {
+	private PermissionsVo getPermissions() {
 		if (Objects.nonNull(this.permissions))
 			return this.permissions;
 
-		final User user = new User();
+		final UserVo user = new UserVo();
 		// TODO Restore me
 		// user.setId(DatabaseManager.getUid());
 		user.setId(Long.valueOf(2L));
 		try {
 			this.permissions = PermissionsDaoGateway.getUserPermissions(user);
 		} catch (final ApplicationException e) {
-			this.permissions = new Permissions();
+			this.permissions = new PermissionsVo();
 		}
 		return this.permissions;
 	}
@@ -87,7 +85,7 @@ public class ProjectsAction extends RestAction {
 	}
 
 	@JsonProperty
-	public Project getProject() {
+	public ProjectVo getProject() {
 		if (Objects.nonNull(this.project) && ValidationUtils.not(ValidationUtils.isId(this.project.getId()))) {
 			this.project.setId(this.projectId);
 		}
@@ -106,13 +104,13 @@ public class ProjectsAction extends RestAction {
 	}
 
 	@JsonProperty
-	public Collection<Project> getProjects() {
+	public Collection<ProjectVo> getProjects() {
 		return this.projects;
 	}
 
 	@Override
 	public String index() throws ApplicationException {
-		this.projects = CommonDaoGateway.getItems(new Project());
+		this.projects = CommonDaoGateway.getItems(new ProjectVo());
 		return ResultConstants.RESULT_SUCCESS;
 	}
 
@@ -179,21 +177,28 @@ public class ProjectsAction extends RestAction {
 		return getPermissions().getMayWrite();
 	}
 
-	public void setProject(final Project project) {
-		this.project = project;
+	public void setProject(final ProjectVo project) {
+		if (Objects.nonNull(project)) {
+			this.project = project;
+		}
 	}
 
 	public void setProjectId(final Long projectId) {
-		this.projectId = projectId;
+		if(ValidationUtils.isId(projectId)) {
+			this.projectId = projectId;
+		}
 	}
 
-	public void setProjects(final List<Project> projects) {
+	public void setProjects(final List<ProjectVo> projects) {
 		this.projects = projects;
 	}
 
 	@Override
 	public String show() throws ApplicationException {
-		final Project proj = new Project();
+		if (Objects.nonNull(this.projects)) {
+			logger.error("Our Projects was of size {}", this.projects.size());
+		}
+		final ProjectVo proj = new ProjectVo();
 		proj.setId(this.projectId);
 		ProjectsAction.logger.info("Our projectId is {} and our project ID is {}", this.projectId, proj.getId());
 		this.project = CommonDaoGateway.getItems(proj).stream().findFirst().orElse(null);

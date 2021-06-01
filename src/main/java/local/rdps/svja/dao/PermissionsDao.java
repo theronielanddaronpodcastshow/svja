@@ -16,8 +16,8 @@ import local.rdps.svja.dao.jooq.tables.UserGroups;
 import local.rdps.svja.dao.jooq.tables.records.GroupPermissionsRecord;
 import local.rdps.svja.dao.jooq.tables.records.UserGroupsRecord;
 import local.rdps.svja.exception.ApplicationException;
-import local.rdps.svja.vo.Permissions;
-import local.rdps.svja.vo.User;
+import local.rdps.svja.vo.PermissionsVo;
+import local.rdps.svja.vo.UserVo;
 
 /**
  * <p>
@@ -45,7 +45,7 @@ class PermissionsDao {
 	 * @throws ApplicationException
 	 *             Iff there is an error trying to connect to the database
 	 */
-	static @NotNull Permissions getUserPermissions(@NotNull final User user) throws ApplicationException {
+	static @NotNull PermissionsVo getUserPermissions(@NotNull final UserVo user) throws ApplicationException {
 		try (final Connection readConn = DatabaseManager.getConnection(false)) {
 			final DSLContext readContext = DatabaseManager.getBuilder(readConn);
 			try (final @NotNull SelectQuery<GroupPermissionsRecord> query = readContext.selectQuery(PermissionsDao.gp);
@@ -57,12 +57,12 @@ class PermissionsDao {
 
 				query.addConditions(DSL.exists(subQuery));
 				final @NotNull Result<GroupPermissionsRecord> results = query.fetch();
-				Permissions permissions = new Permissions();
+				PermissionsVo permissions = new PermissionsVo();
 				for (final GroupPermissionsRecord result : results) {
-					final Permissions perm = new Permissions();
+					final PermissionsVo perm = new PermissionsVo();
 					perm.setMayAdmin(Boolean.valueOf(PermissionsDao.TRUE.equals(result.getCanAdmin())));
 					perm.setMayWrite(Boolean.valueOf(PermissionsDao.TRUE.equals(result.getCanWrite())));
-					permissions = Permissions.mergePermissions(permissions, perm);
+					permissions = PermissionsVo.mergePermissions(permissions, perm);
 				}
 				permissions.setId(user.getId());
 				return permissions;
@@ -70,9 +70,9 @@ class PermissionsDao {
 		} catch (final @NotNull SQLException e) {
 			PermissionsDao.logger.error(e.getMessage(), e);
 
-			final Permissions permissions = new Permissions();
+			final PermissionsVo permissions = new PermissionsVo();
 			permissions.setId(user.getId());
-			return new Permissions();
+			return new PermissionsVo();
 		}
 	}
 

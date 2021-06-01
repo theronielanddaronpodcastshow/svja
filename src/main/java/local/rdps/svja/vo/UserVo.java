@@ -18,7 +18,7 @@ import local.rdps.svja.dao.jooq.tables.Users;
  * @author DaRon
  * @since 1.0
  */
-public class User extends ItemVo {
+public class UserVo extends ItemVo {
 	/**
 	 * When the last date-time was that the user logged in
 	 */

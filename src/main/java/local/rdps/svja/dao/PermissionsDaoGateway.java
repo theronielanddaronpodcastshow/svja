@@ -7,8 +7,8 @@ import org.jetbrains.annotations.Nullable;
 
 import local.rdps.svja.exception.ApplicationException;
 import local.rdps.svja.util.ValidationUtils;
-import local.rdps.svja.vo.Permissions;
-import local.rdps.svja.vo.User;
+import local.rdps.svja.vo.PermissionsVo;
+import local.rdps.svja.vo.UserVo;
 
 /**
  * <p>
@@ -31,9 +31,9 @@ public class PermissionsDaoGateway {
 	 * @throws ApplicationException
 	 *             Iff there is an error trying to connect to the database
 	 */
-	public static @NotNull Permissions getUserPermissions(@Nullable final User user) throws ApplicationException {
+	public static @NotNull PermissionsVo getUserPermissions(@Nullable final UserVo user) throws ApplicationException {
 		if (Objects.isNull(user) || ValidationUtils.not(ValidationUtils.isId(user.getId())))
-			return new Permissions();
+			return new PermissionsVo();
 
 		return PermissionsDao.getUserPermissions(user);
 	}

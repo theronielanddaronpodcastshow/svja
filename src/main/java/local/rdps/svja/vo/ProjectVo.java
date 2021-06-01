@@ -16,7 +16,7 @@ import local.rdps.svja.dao.jooq.tables.Projects;
  * @author DaRon
  * @since 1.0
  */
-public class Project extends ItemVo {
+public class ProjectVo extends ItemVo {
 	/**
 	 * The project's description
 	 */
