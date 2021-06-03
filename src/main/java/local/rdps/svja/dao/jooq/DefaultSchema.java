@@ -14,6 +14,7 @@ import local.rdps.svja.dao.jooq.tables.GroupPermissions;
 import local.rdps.svja.dao.jooq.tables.Groups;
 import local.rdps.svja.dao.jooq.tables.ProjectFiles;
 import local.rdps.svja.dao.jooq.tables.Projects;
+import local.rdps.svja.dao.jooq.tables.Sessions;
 import local.rdps.svja.dao.jooq.tables.SqliteSequence;
 import local.rdps.svja.dao.jooq.tables.UserGroups;
 import local.rdps.svja.dao.jooq.tables.Users;
@@ -70,6 +71,11 @@ public class DefaultSchema extends SchemaImpl {
     public final Projects PROJECTS = Projects.PROJECTS;
 
     /**
+     * The table <code>sessions</code>.
+     */
+    public final Sessions SESSIONS = Sessions.SESSIONS;
+
+    /**
      * The table <code>sqlite_sequence</code>.
      */
     public final SqliteSequence SQLITE_SEQUENCE = SqliteSequence.SQLITE_SEQUENCE;
@@ -107,6 +113,7 @@ public class DefaultSchema extends SchemaImpl {
             Groups.GROUPS,
             ProjectFiles.PROJECT_FILES,
             Projects.PROJECTS,
+            Sessions.SESSIONS,
             SqliteSequence.SQLITE_SEQUENCE,
             UserGroups.USER_GROUPS,
             Users.USERS);

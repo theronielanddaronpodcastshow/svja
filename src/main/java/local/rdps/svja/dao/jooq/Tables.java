@@ -11,6 +11,7 @@ import local.rdps.svja.dao.jooq.tables.GroupPermissions;
 import local.rdps.svja.dao.jooq.tables.Groups;
 import local.rdps.svja.dao.jooq.tables.ProjectFiles;
 import local.rdps.svja.dao.jooq.tables.Projects;
+import local.rdps.svja.dao.jooq.tables.Sessions;
 import local.rdps.svja.dao.jooq.tables.SqliteSequence;
 import local.rdps.svja.dao.jooq.tables.UserGroups;
 import local.rdps.svja.dao.jooq.tables.Users;
@@ -53,6 +54,11 @@ public class Tables {
      * The table <code>projects</code>.
      */
     public static final Projects PROJECTS = Projects.PROJECTS;
+
+    /**
+     * The table <code>sessions</code>.
+     */
+    public static final Sessions SESSIONS = Sessions.SESSIONS;
 
     /**
      * The table <code>sqlite_sequence</code>.

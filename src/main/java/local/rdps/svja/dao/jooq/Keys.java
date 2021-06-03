@@ -11,6 +11,7 @@ import local.rdps.svja.dao.jooq.tables.GroupPermissions;
 import local.rdps.svja.dao.jooq.tables.Groups;
 import local.rdps.svja.dao.jooq.tables.ProjectFiles;
 import local.rdps.svja.dao.jooq.tables.Projects;
+import local.rdps.svja.dao.jooq.tables.Sessions;
 import local.rdps.svja.dao.jooq.tables.UserGroups;
 import local.rdps.svja.dao.jooq.tables.Users;
 import local.rdps.svja.dao.jooq.tables.records.FilesRecord;
@@ -18,6 +19,7 @@ import local.rdps.svja.dao.jooq.tables.records.GroupPermissionsRecord;
 import local.rdps.svja.dao.jooq.tables.records.GroupsRecord;
 import local.rdps.svja.dao.jooq.tables.records.ProjectFilesRecord;
 import local.rdps.svja.dao.jooq.tables.records.ProjectsRecord;
+import local.rdps.svja.dao.jooq.tables.records.SessionsRecord;
 import local.rdps.svja.dao.jooq.tables.records.UserGroupsRecord;
 import local.rdps.svja.dao.jooq.tables.records.UsersRecord;
 
@@ -54,6 +56,9 @@ public class Keys {
     public static final UniqueKey<GroupsRecord> SQLITE_AUTOINDEX_GROUPS_2 = Internal.createUniqueKey(Groups.GROUPS, DSL.name("sqlite_autoindex_groups_2"), new TableField[] { Groups.GROUPS.NAME }, true);
     public static final UniqueKey<ProjectFilesRecord> PK_PROJECT_FILES = Internal.createUniqueKey(ProjectFiles.PROJECT_FILES, DSL.name("pk_project_files"), new TableField[] { ProjectFiles.PROJECT_FILES.PROJECT_ID, ProjectFiles.PROJECT_FILES.FILE_ID }, true);
     public static final UniqueKey<ProjectsRecord> PK_PROJECTS = Internal.createUniqueKey(Projects.PROJECTS, DSL.name("pk_projects"), new TableField[] { Projects.PROJECTS.ID }, true);
+    public static final UniqueKey<ProjectsRecord> SQLITE_AUTOINDEX_PROJECTS_1 = Internal.createUniqueKey(Projects.PROJECTS, DSL.name("sqlite_autoindex_projects_1"), new TableField[] { Projects.PROJECTS.ID }, true);
+    public static final UniqueKey<SessionsRecord> PK_SESSIONS = Internal.createUniqueKey(Sessions.SESSIONS, DSL.name("pk_sessions"), new TableField[] { Sessions.SESSIONS.ID }, true);
+    public static final UniqueKey<SessionsRecord> SQLITE_AUTOINDEX_SESSIONS_1 = Internal.createUniqueKey(Sessions.SESSIONS, DSL.name("sqlite_autoindex_sessions_1"), new TableField[] { Sessions.SESSIONS.ID }, true);
     public static final UniqueKey<UserGroupsRecord> PK_USER_GROUPS = Internal.createUniqueKey(UserGroups.USER_GROUPS, DSL.name("pk_user_groups"), new TableField[] { UserGroups.USER_GROUPS.USER_ID, UserGroups.USER_GROUPS.GROUP_ID }, true);
     public static final UniqueKey<UsersRecord> PK_USERS = Internal.createUniqueKey(Users.USERS, DSL.name("pk_users"), new TableField[] { Users.USERS.ID }, true);
     public static final UniqueKey<UsersRecord> SQLITE_AUTOINDEX_USERS_1 = Internal.createUniqueKey(Users.USERS, DSL.name("sqlite_autoindex_users_1"), new TableField[] { Users.USERS.ID }, true);

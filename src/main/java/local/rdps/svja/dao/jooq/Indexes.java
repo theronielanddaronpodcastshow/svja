@@ -11,6 +11,7 @@ import local.rdps.svja.dao.jooq.tables.GroupPermissions;
 import local.rdps.svja.dao.jooq.tables.Groups;
 import local.rdps.svja.dao.jooq.tables.ProjectFiles;
 import local.rdps.svja.dao.jooq.tables.Projects;
+import local.rdps.svja.dao.jooq.tables.Sessions;
 import local.rdps.svja.dao.jooq.tables.UserGroups;
 import local.rdps.svja.dao.jooq.tables.Users;
 
@@ -43,6 +44,7 @@ public class Indexes {
     public static final Index PROJECT_FILES_FID_INDEX = Internal.createIndex(DSL.name("project_files_fid_index"), ProjectFiles.PROJECT_FILES, new OrderField[] { ProjectFiles.PROJECT_FILES.FILE_ID }, false);
     public static final Index PROJECT_FILES_PID_INDEX = Internal.createIndex(DSL.name("project_files_pid_index"), ProjectFiles.PROJECT_FILES, new OrderField[] { ProjectFiles.PROJECT_FILES.PROJECT_ID }, false);
     public static final Index PROJECTS_ID_INDEX = Internal.createIndex(DSL.name("projects_id_index"), Projects.PROJECTS, new OrderField[] { Projects.PROJECTS.ID }, false);
+    public static final Index SESSIONS_ID_INDEX = Internal.createIndex(DSL.name("sessions_id_index"), Sessions.SESSIONS, new OrderField[] { Sessions.SESSIONS.ID }, false);
     public static final Index USER_GROUPS_GID_INDEX = Internal.createIndex(DSL.name("user_groups_gid_index"), UserGroups.USER_GROUPS, new OrderField[] { UserGroups.USER_GROUPS.GROUP_ID }, false);
     public static final Index USER_GROUPS_UID_INDEX = Internal.createIndex(DSL.name("user_groups_uid_index"), UserGroups.USER_GROUPS, new OrderField[] { UserGroups.USER_GROUPS.USER_ID }, false);
     public static final Index USERS_ID_INDEX = Internal.createIndex(DSL.name("users_id_index"), Users.USERS, new OrderField[] { Users.USERS.ID }, false);

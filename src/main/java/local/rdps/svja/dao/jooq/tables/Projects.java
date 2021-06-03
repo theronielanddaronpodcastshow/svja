@@ -147,7 +147,7 @@ public class Projects extends TableImpl<ProjectsRecord> {
     @Override
     @NotNull
     public List<UniqueKey<ProjectsRecord>> getKeys() {
-        return Arrays.<UniqueKey<ProjectsRecord>>asList(Keys.PK_PROJECTS);
+        return Arrays.<UniqueKey<ProjectsRecord>>asList(Keys.PK_PROJECTS, Keys.SQLITE_AUTOINDEX_PROJECTS_1);
     }
 
     @Override

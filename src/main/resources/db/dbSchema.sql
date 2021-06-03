@@ -59,7 +59,7 @@ CREATE INDEX "files_id_index" ON "files" ("id");
 
 CREATE TABLE "projects"
 (
-    "id"            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id"            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
     "title"         TEXT    NOT NULL,
     "description"   TEXT,
     "modified_by"   INTEGER NOT NULL,
@@ -81,3 +81,9 @@ CREATE TABLE "project_files"
 ) WITHOUT ROWID;
 CREATE INDEX "project_files_pid_index" ON "project_files" ("project_id");
 CREATE INDEX "project_files_fid_index" ON "project_files" ("file_id");
+
+CREATE TABLE "sessions" (
+	"id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	"session_data"	TEXT
+);
+CREATE INDEX "sessions_id_index" ON "sessions" ("id");
