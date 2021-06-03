@@ -86,11 +86,15 @@ public final class FileConstants {
 	public static final String EXTENSION_ZIP = "zip";
 	/**
 	 * Maps file types to content types
+	 *
+	 * @since 1.0
 	 */
 	public static final @NotNull Map<String, String> FILE_CONTENT_TYPES = FileConstants.getFileContentTypesMap();
 	public static final String FILE_DOWNLOAD_COOKIE_NAME = "fileDownload";
 	/**
 	 * Maps file types to file type categories
+	 *
+	 * @since 1.0
 	 */
 	public static final Map<FileTypeCategory, List<String>> FILE_UPLOAD_TYPES_MAP = FileConstants
 			.populateFileUploadTypesMap();
@@ -102,6 +106,8 @@ public final class FileConstants {
 
 	/**
 	 * This is the size buffers should be when transferring files and other data across the network (it is 33.55MB)
+	 *
+	 * @since 1.0
 	 */
 	public static final int TRANSFER_BUFFER_SIZE = 2 << 25;
 
@@ -136,9 +142,12 @@ public final class FileConstants {
 	}
 
 	/**
-	 * Populates the file types map
+	 * <p>
+	 * Populates the file types map.
+	 * </p>
 	 *
-	 * @return
+	 * @return A mapping of {@link FileTypeCategory} instances against the corresponding extensions (file types)
+	 * @since 1.0
 	 */
 	private static Map<FileTypeCategory, List<String>> populateFileUploadTypesMap() {
 		final Map<FileTypeCategory, List<String>> fileUploadTypesMap = new HashMap<>();
@@ -171,10 +180,13 @@ public final class FileConstants {
 	}
 
 	/**
+	 * <p>
 	 * Uses the file type categories map to return a list of file types under a given category
+	 * </p>
 	 *
-	 * @param fileTypeCategory
-	 * @return
+	 * @param fileTypeCategory A file type category that we would like to get a listing for
+	 * @return A {@link List} containing the file types allowed based on the given category
+	 * @since 1.0
 	 */
 	public static @NotNull List<String> getValidFileUploadTypes(final @NotNull FileTypeCategory fileTypeCategory) {
 		if (!FileConstants.FILE_UPLOAD_TYPES_MAP.containsKey(fileTypeCategory)
@@ -187,6 +199,8 @@ public final class FileConstants {
 	 * <p>
 	 * No one should be instantiating this class.
 	 * </p>
+	 *
+	 * @since 1.0
 	 */
 	private FileConstants() {
 		// Do nothing

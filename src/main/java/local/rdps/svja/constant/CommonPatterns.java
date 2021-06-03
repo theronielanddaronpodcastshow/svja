@@ -51,6 +51,8 @@ public class CommonPatterns {
 	 * <p>
 	 * No one should be instantiating this class.
 	 * </p>
+	 *
+	 * @since 1.0
 	 */
 	private CommonPatterns() {
 		// Do nothing

@@ -11,6 +11,8 @@ package local.rdps.svja.constant;
 public final class ErrorConstants {
 	/**
 	 * Used to help make logging decisions. This constant means that we should not log the stack trace at all.
+	 *
+	 * @since 1.0
 	 */
 	public static final byte DO_NOT_LOG_STACK_TRACE = 0;
 	public static final String ERROR_BLO_ILLEGAL_PARAMETER = "Illegal parameter in BLO: ";
@@ -30,16 +32,22 @@ public final class ErrorConstants {
 	/**
 	 * Used to help make logging decisions. This constant means that we should log only some of the stack track with the
 	 * exception -- all in one entry and at the same level (trace follows message).
+	 *
+	 * @since 1.0
 	 */
 	public static final byte LOG_LIMITED_STACK_TRACE = 3;
 	/**
 	 * Used to help make logging decisions. This constant means that we should log the stack trace, but do so in a
 	 * separate, INFO message.
+	 *
+	 * @since 1.0
 	 */
 	public static final byte LOG_STACK_TRACE_AS_INFO = 2;
 	/**
 	 * Used to help make logging decisions. This constant means that we should log the stack trace with the exception --
 	 * all in one entry and at the same level (trace follows message).
+	 *
+	 * @since 1.0
 	 */
 	public static final byte LOG_STACK_TRACE_WITH_EXCEPTION = 1;
 
@@ -47,6 +55,8 @@ public final class ErrorConstants {
 	 * <p>
 	 * No one should be instantiating this class.
 	 * </p>
+	 *
+	 * @since 1.0
 	 */
 	private ErrorConstants() {
 		// Do nothing
