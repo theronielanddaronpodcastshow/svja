@@ -42,8 +42,7 @@ public class ActionTimer implements PreResultListener {
 
 	/**
 	 * <p>
-	 * This method writes any cookies in the action to the response, including any deletion requests (cookies with a
-	 * null or empty value).
+	 * This method logs how long an action took, in total, to execute.
 	 * </p>
 	 * {@inheritDoc}
 	 */
