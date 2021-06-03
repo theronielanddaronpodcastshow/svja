@@ -27,11 +27,11 @@ public class ActionTimer implements PreResultListener {
 
 	/**
 	 * <p>
-	 * This constructor creates a new ActionTimer using the given {@link BaseForm}.
+	 * This constructor creates a new ActionTimer using the given {@link BaseAction}.
 	 * </p>
 	 *
 	 * @param action
-	 *            The {@link BaseForm} from which this pre-result listener has been started
+	 *            The {@link BaseAction} from which this pre-result listener has been started
 	 */
 	public ActionTimer(final @NotNull BaseAction action) {
 		this.action = action;
@@ -57,7 +57,7 @@ public class ActionTimer implements PreResultListener {
 		} else {
 			if (ActionTimer.logger.isWarnEnabled()) {
 				ActionTimer.logger.warn(
-						"We are running the session writer against something other than a BaseForm or the action is null; action = {} and the invocation was {}",
+						"We are running the session writer against something other than a BaseAction or the action is null; action = {} and the invocation was {}",
 						this.action, invocation.getInvocationContext().getName());
 			}
 		}
