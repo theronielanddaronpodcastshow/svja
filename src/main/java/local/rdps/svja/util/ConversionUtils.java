@@ -378,11 +378,13 @@ public class ConversionUtils {
 	}
 
 	/**
-	 * Parses a BigDecimal from a String.
+	 * <p>
+	 * Parses a {@link BigDecimal} from a {@link String}.
+	 * </p>
 	 *
 	 * @param str
 	 *            The text to convert
-	 * @return A BigDecimal (or BigDecimal.ZERO if the conversion failed)
+	 * @return A {@link BigDecimal} (or {@link BigDecimal#ZERO} if the conversion failed)
 	 */
 	public static BigDecimal stringToBigDecimal(final CharSequence str) {
 		final DecimalFormat d = new DecimalFormat();
@@ -392,6 +394,21 @@ public class ConversionUtils {
 		} catch (final @NotNull ParseException ignored) {
 			return BigDecimal.ZERO;
 		}
+	}
+
+	/**
+	 * <p>
+	 * Convert a given string to an integer value.
+	 * </p>
+	 *
+	 * @param exp
+	 * @return The {@link Long} based on the {@link String}
+	 */
+	@Contract("null -> null")
+	public static final @Nullable Long stringToLong(final String exp) {
+		if (!ValidationUtils.isNumber(exp))
+			return null;
+		return Long.valueOf(exp);
 	}
 
 	/**
