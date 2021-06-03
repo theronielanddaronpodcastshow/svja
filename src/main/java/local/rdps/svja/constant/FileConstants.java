@@ -184,7 +184,8 @@ public final class FileConstants {
 	 * Uses the file type categories map to return a list of file types under a given category
 	 * </p>
 	 *
-	 * @param fileTypeCategory A file type category that we would like to get a listing for
+	 * @param fileTypeCategory
+	 *            A file type category that we would like to get a listing for
 	 * @return A {@link List} containing the file types allowed based on the given category
 	 * @since 1.0
 	 */
