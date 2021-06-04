@@ -187,7 +187,7 @@ public class JsonErrorInterceptor implements Interceptor {
 
 			// Set the HTTP response status code and return the exception return string
 			response.setStatus(error.getExceptionStatusCode());
-			return error.getExceptionReturnString();
+			return ResultConstants.RESULT_EXCEPTION;
 		}
 	}
 }
