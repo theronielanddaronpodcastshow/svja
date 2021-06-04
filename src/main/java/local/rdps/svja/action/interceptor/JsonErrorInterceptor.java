@@ -35,24 +35,6 @@ import javax.servlet.http.HttpServletResponse;
  * @since 1.0
  */
 public class JsonErrorInterceptor implements Interceptor {
-	/**
-	 * The PreResultListener happens in between the action completing and the result being generated. This allows one to
-	 * modify the result code that is returned from the action.
-	 */
-	private static class APIErrorChecker implements PreResultListener {
-		@Override
-		public void beforeResult(final ActionInvocation invocation, final String result) {
-			// Determine if an error exists on the struts stack
-			// if so, make sure to return a json error page rather than an html page result
-			if (!ValidationUtils.isEmpty(invocation.getStack().findValue("exception"))) {
-				final Exception e = (Exception) invocation.getStack().findValue("exception");
-				final RestAction action = (RestAction) invocation.getAction();
-				JsonErrorInterceptor.processException(action, e);
-			}
-		}
-	}
-
-	private static final String APP_ERROR_MSG = "Application Error";
 	private static final Logger logger = LogManager.getLogger();
 
 	/**
@@ -168,7 +150,6 @@ public class JsonErrorInterceptor implements Interceptor {
 
 	@Override
 	public String intercept(final ActionInvocation invocation) throws Exception {
-		// invocation.addPreResultListener(new APIErrorChecker());
 		try {
 			return invocation.invoke();
 		} catch (final Exception e) {
