@@ -36,12 +36,6 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class JsonErrorInterceptor implements Interceptor {
 	private static final Logger logger = LogManager.getLogger();
-
-	/**
-	 * <p>
-	 * This field
-	 * </p>
-	 */
 	private static final long serialVersionUID = 9156313660873257945L;
 
 	/**
