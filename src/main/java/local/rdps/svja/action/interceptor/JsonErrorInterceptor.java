@@ -4,8 +4,10 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.TimeZone;
 
+import com.opensymphony.xwork2.ActionContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.struts2.StrutsStatics;
 import org.apache.struts2.json.JSONException;
 
 import com.opensymphony.xwork2.ActionInvocation;
@@ -21,6 +23,8 @@ import local.rdps.svja.exception.ApplicationException;
 import local.rdps.svja.exception.IllegalParameterException;
 import local.rdps.svja.util.ValidationUtils;
 import local.rdps.svja.vo.JsonErrorVo;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * <p>
@@ -143,24 +147,12 @@ public class JsonErrorInterceptor implements Interceptor {
 
 		// log the exception
 		JsonErrorInterceptor.logExceptionData(error);
-	}
-
-	/**
-	 * Process the exception: - log the exception - send an email about the exception if appropriate (code >= 500)
-	 *
-	 * @param action
-	 * @param e
-	 */
-	private static void processException(final RestAction action, final Exception e) {
-		final ApplicationException error = e instanceof ApplicationException ? (ApplicationException) e
-				: new ApplicationException(e.getMessage(), e);
-
-		// log the exception
-		JsonErrorInterceptor.logExceptionData(error);
 
 		// setup error that displays on the front-end
-		final JsonErrorVo JsonErrorVo = JsonErrorInterceptor.createJsonErrorObject(error);
-		action.setError(JsonErrorVo);
+		if(action instanceof RestAction) {
+			final JsonErrorVo jsonError = JsonErrorInterceptor.createJsonErrorObject(error);
+			((RestAction) action).setError(jsonError);
+		}
 	}
 
 	@Override
@@ -180,6 +172,8 @@ public class JsonErrorInterceptor implements Interceptor {
 		try {
 			return invocation.invoke();
 		} catch (final Exception e) {
+			final ActionContext context = invocation.getInvocationContext();
+			final HttpServletResponse response = (HttpServletResponse) context.get(StrutsStatics.HTTP_RESPONSE);
 			final ApplicationException error = e instanceof ApplicationException ? (ApplicationException) e
 					// wrap json parsing exceptions as illegal parameter exceptions
 					: (e instanceof JSONException) || (e instanceof NumberFormatException)
@@ -188,15 +182,12 @@ public class JsonErrorInterceptor implements Interceptor {
 							: new ApplicationException(e.getMessage(), e);
 			// add exception reference to the front-end
 			invocation.getStack().push(new ExceptionHolder(error));
-			final Object action = invocation.getAction();
-			if (action instanceof RestAction) {
-				// process the exception
-				JsonErrorInterceptor.processException((RestAction) action, error);
-				return ResultConstants.RESULT_EXCEPTION;
-			} else if (action instanceof BaseAction) {
-				JsonErrorInterceptor.processException((BaseAction) action, error);
-			}
-			return ResultConstants.RESULT_ERROR_APINOTFOUND;
+
+			JsonErrorInterceptor.processException((BaseAction) invocation.getAction(), error);
+
+			// Set the HTTP response status code and return the exception return string
+			response.setStatus(error.getExceptionStatusCode());
+			return error.getExceptionReturnString();
 		}
 	}
 }
