@@ -4,6 +4,7 @@
 package local.rdps.svja.dao.jooq.tables;
 
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,7 +22,7 @@ import org.jooq.Identity;
 import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row2;
+import org.jooq.Row3;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -71,6 +72,11 @@ public class Sessions extends TableImpl<SessionsRecord> {
      */
     public final TableField<SessionsRecord, String> SESSION_DATA = createField(DSL.name("session_data"), SQLDataType.CLOB, this, "");
 
+    /**
+     * The column <code>sessions.last_accessed</code>.
+     */
+    public final TableField<SessionsRecord, LocalDateTime> LAST_ACCESSED = createField(DSL.name("last_accessed"), SQLDataType.LOCALDATETIME(0).defaultValue(DSL.field("CURRENT_TIMESTAMP", SQLDataType.LOCALDATETIME)), this, "");
+
     private Sessions(Name alias, Table<SessionsRecord> aliased) {
         this(alias, aliased, null);
     }
@@ -113,7 +119,7 @@ public class Sessions extends TableImpl<SessionsRecord> {
     @Override
     @NotNull
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.SESSIONS_ID_INDEX);
+        return Arrays.<Index>asList(Indexes.SESSIONS_ID_INDEX, Indexes.SESSIONS_LA_INDEX);
     }
 
     @Override
@@ -165,12 +171,12 @@ public class Sessions extends TableImpl<SessionsRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row2 type methods
+    // Row3 type methods
     // -------------------------------------------------------------------------
 
     @Override
     @NotNull
-    public Row2<Integer, String> fieldsRow() {
-        return (Row2) super.fieldsRow();
+    public Row3<Integer, String, LocalDateTime> fieldsRow() {
+        return (Row3) super.fieldsRow();
     }
 }

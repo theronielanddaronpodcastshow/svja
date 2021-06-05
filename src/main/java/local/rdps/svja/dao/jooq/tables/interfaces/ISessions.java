@@ -5,6 +5,7 @@ package local.rdps.svja.dao.jooq.tables.interfaces;
 
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 import javax.annotation.processing.Generated;
 
@@ -46,6 +47,17 @@ public interface ISessions extends Serializable {
      */
     @Nullable
     public String getSessionData();
+
+    /**
+     * Setter for <code>sessions.last_accessed</code>.
+     */
+    public void setLastAccessed(@Nullable LocalDateTime value);
+
+    /**
+     * Getter for <code>sessions.last_accessed</code>.
+     */
+    @Nullable
+    public LocalDateTime getLastAccessed();
 
     // -------------------------------------------------------------------------
     // FROM and INTO

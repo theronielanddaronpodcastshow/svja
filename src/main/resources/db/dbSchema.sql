@@ -75,15 +75,18 @@ CREATE TABLE "project_files"
     "modified_by"   INTEGER NOT NULL,
     "modified_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY ("file_id") REFERENCES "files" ("id"),
-    FOREIGN KEY ("project_id") REFERENCES "projects" ("id")
+    FOREIGN KEY ("project_id") REFERENCES "projects" ("id"),
     FOREIGN KEY ("modified_by") REFERENCES "users" ("id"),
     PRIMARY KEY ("project_id", "file_id")
 ) WITHOUT ROWID;
 CREATE INDEX "project_files_pid_index" ON "project_files" ("project_id");
 CREATE INDEX "project_files_fid_index" ON "project_files" ("file_id");
 
-CREATE TABLE "sessions" (
-	"id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-	"session_data"	TEXT
+CREATE TABLE "sessions"
+(
+    "id"            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+    "session_data"  TEXT,
+    "last_accessed" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 CREATE INDEX "sessions_id_index" ON "sessions" ("id");
+CREATE INDEX "sessions_la_index" on "sessions" ("last_accessed");
