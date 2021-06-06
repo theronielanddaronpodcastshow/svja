@@ -154,4 +154,9 @@ public class UserVo extends ItemVo {
 	public void setUsername(@Nullable final String username) {
 		this.username = username;
 	}
+
+	@Override
+	public String toString() {
+		return "username: " + this.username;
+	}
 }

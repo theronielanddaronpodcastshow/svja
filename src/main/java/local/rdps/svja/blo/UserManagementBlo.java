@@ -1,5 +1,6 @@
 package local.rdps.svja.blo;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -42,8 +43,12 @@ public class UserManagementBlo {
 				.orElseThrow(() -> new AuthenticationException("Unable to find a user with the given data: " + user));
 		if (ValidationUtils.isEmpty(userRecord.getId()))
 			throw new AuthenticationException("The user found is lacking an id: " + user);
-		if (Objects.equals(user.getPassword(), userRecord.getPassword()))
+		if (Objects.equals(user.getPassword(), userRecord.getPassword())) {
+			userRecord.setLastLoginDate(Instant.now());
+			userRecord.setLoginCount(userRecord.getLoginCount()+1);
+			CommonDaoGateway.upsertItem(userRecord);
 			return userRecord;
+		}
 
 		throw new AuthenticationException("Argh... our passwords didn't match!");
 	}
