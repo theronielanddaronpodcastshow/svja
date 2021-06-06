@@ -104,10 +104,7 @@
         <action name="unknownHandler" method="handleUnknownRequest" class="local.rdps.svja.action.BaseAction"/>
 
         <!-- Authentication Actions -->
-        <action name="api/authenticate" method="authenticate" class="local.rdps.svja.action.AuthenticationAction">
-            <param name="xssProtectionsPolicy">ANYTHING_GOES</param>
-            <param name="suppressEmptyParameters">true</param>
-        </action>
+        <action name="api/authenticate" method="authenticate" class="local.rdps.svja.action.AuthenticationAction"/>
 
         <!-- General Actions -->
         <action name="api/files" class="local.rdps.svja.action.FilesAction"/>
