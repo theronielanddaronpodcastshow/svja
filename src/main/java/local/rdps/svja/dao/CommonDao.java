@@ -18,7 +18,6 @@ import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.SelectQuery;
 import org.jooq.Table;
-import org.jooq.UniqueKey;
 import org.jooq.UpdatableRecord;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
@@ -206,6 +205,7 @@ class CommonDao {
 		try (final Connection writeConn = DatabaseManager.getConnection(true)) {
 			DatabaseManager.getBuilder(writeConn);
 			DatabaseManager.setConfiguration(item, writeConn);
+			// TODO
 			// // Use the VO's dirty fields list to determine what changed
 			// Arrays.stream(record.fields()).forEach(field -> record.changed(field, false));
 			// for (final String field : item.getDirtyFields()) {
@@ -220,15 +220,7 @@ class CommonDao {
 			// }
 			// }
 
-			final int updated;
-			final UniqueKey<R> pk = t.getPrimaryKey();
-			if (pk.getFields().stream().anyMatch(field -> Objects.isNull(item.getValue(field)))) {
-				updated = item.insert();
-			} else {
-				Arrays.stream(item.fields()).filter(field -> pk.getFields().contains(field))
-						.filter(field -> Objects.nonNull(item.get(field))).forEach(field -> item.changed(field, true));
-				updated = item.update();
-			}
+			final int updated = item.merge();
 
 			// Check that we didn't delete too many rows
 			if (updated > 1) {
