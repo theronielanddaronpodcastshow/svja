@@ -132,7 +132,7 @@ public class AuthenticationAction extends RestAction {
 		final Optional<String> newSessionId = rekeyTheUser();
 
 		// set up the user's session
-		this.userSession.put(SessionConstants.AUTHENTICATED_USER_ID, user.getId());
+		this.session.put(SessionConstants.AUTHENTICATED_USER_ID, user.getId());
 
 		if (AuthenticationAction.logger.isDebugEnabled()) {
 			AuthenticationAction.logger.debug("Session Successfully Created.");
@@ -200,15 +200,15 @@ public class AuthenticationAction extends RestAction {
 	 *             If the user isn't authenticated
 	 */
 	public void isUserAuthenticated() throws ApplicationException, AuthenticationException {
-		if (ValidationUtils.isEmpty(this.userSession))
+		if (ValidationUtils.isEmpty(this.session))
 			throw new AuthenticationException("The user session is empty");
 
-		if (ValidationUtils.isEmpty(this.userSession.get(SessionConstants.AUTHENTICATED_USER_ID)))
+		if (ValidationUtils.isEmpty(this.session.get(SessionConstants.AUTHENTICATED_USER_ID)))
 			throw new AuthenticationException("No authenticated userId found in the user session." + "\nSessionId: "
-					+ getSessionsRecord().getId() + "\nSession: " + this.userSession);
+					+ getSessionsRecord().getId() + "\nSession: " + this.session);
 
 		final Long userId = ConversionUtils.as(Long.class,
-				this.userSession.get(SessionConstants.AUTHENTICATED_USER_ID));
+				this.session.get(SessionConstants.AUTHENTICATED_USER_ID));
 
 		AuthenticationAction.logger.info("Checking on user {} with a User-Agent of {}", userId,
 				this.request.getHeader("User-Agent"));

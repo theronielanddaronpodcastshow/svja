@@ -1,28 +1,8 @@
 package local.rdps.svja.action;
 
-import java.time.Instant;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jooq.lambda.tuple.Tuple2;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
-
 import local.rdps.svja.action.preresultlistener.CookieWriter;
 import local.rdps.svja.action.preresultlistener.SessionWriter;
 import local.rdps.svja.blo.SessionBloGateway;
@@ -35,6 +15,23 @@ import local.rdps.svja.exception.ApplicationException;
 import local.rdps.svja.exception.IllegalParameterException;
 import local.rdps.svja.exception.NotFoundException;
 import local.rdps.svja.util.ValidationUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jooq.lambda.tuple.Tuple2;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.time.Instant;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -66,12 +63,12 @@ public class BaseAction extends ActionSupport implements ActionInterface {
 	/**
 	 * The current session
 	 */
-	private SessionsRecord session;
+	private SessionsRecord sessionsRecord;
 	private boolean sessionDeleted;
 	private boolean sessionIdHasChanged;
 	protected HttpServletRequest request;
 	protected HttpServletResponse response;
-	protected Map<String, Object> userSession;
+	protected Map<String, Object> session;
 	/**
 	 * Used to track how long an action takes
 	 */
@@ -115,12 +112,12 @@ public class BaseAction extends ActionSupport implements ActionInterface {
 				BaseAction.logger.debug("We are going to change the session ID");
 			}
 
-			this.session = SessionBloGateway.createNewSessionOrUpdateLastAccessed(null);
+			this.sessionsRecord = SessionBloGateway.createNewSessionOrUpdateLastAccessed(null);
 			if (BaseAction.logger.isDebugEnabled()) {
 				BaseAction.logger.debug("The session is changing from {} to {}",
-						this.cookies.get(AuthenticationConstants.SESSION_COOKIE_NAME), this.session.getId());
+						this.cookies.get(AuthenticationConstants.SESSION_COOKIE_NAME), this.sessionsRecord.getId());
 			}
-			this.cookies.put(AuthenticationConstants.SESSION_COOKIE_NAME, this.session.getId().toString());
+			this.cookies.put(AuthenticationConstants.SESSION_COOKIE_NAME, this.sessionsRecord.getId().toString());
 			this.sessionIdHasChanged = true;
 		}
 
@@ -189,8 +186,8 @@ public class BaseAction extends ActionSupport implements ActionInterface {
 		}
 		this.sessionDeleted = true;
 
-		this.session = SessionBloGateway.createNewSessionOrUpdateLastAccessed(null);
-		this.cookies.put(AuthenticationConstants.SESSION_COOKIE_NAME, this.session.getId().toString());
+		this.sessionsRecord = SessionBloGateway.createNewSessionOrUpdateLastAccessed(null);
+		this.cookies.put(AuthenticationConstants.SESSION_COOKIE_NAME, this.sessionsRecord.getId().toString());
 	}
 
 	/**
@@ -246,7 +243,7 @@ public class BaseAction extends ActionSupport implements ActionInterface {
 	 * @return The session map
 	 */
 	public Map<String, Object> getSession() {
-		return this.userSession;
+		return this.session;
 	}
 
 	/**
@@ -259,11 +256,11 @@ public class BaseAction extends ActionSupport implements ActionInterface {
 	 */
 	public Optional<String> getSessionId() {
 		final String sessionId;
-		if (Objects.isNull(this.session) || (ValidationUtils.isEmpty(this.session.getId()))) {
+		if (Objects.isNull(this.sessionsRecord) || (ValidationUtils.isEmpty(this.sessionsRecord.getId()))) {
 			sessionId = this.cookies.get(AuthenticationConstants.SESSION_COOKIE_NAME);
 			BaseAction.logger.error("The session id is {}", sessionId);
 		} else {
-			sessionId = this.session.getId();
+			sessionId = this.sessionsRecord.getId();
 			BaseAction.logger.error("The session id is {}", sessionId);
 		}
 		if (this.sessionIdHasChanged) {
@@ -317,7 +314,7 @@ public class BaseAction extends ActionSupport implements ActionInterface {
 	 * @return The {@link SessionsRecord}
 	 */
 	public SessionsRecord getSessionsRecord() {
-		return this.session;
+		return this.sessionsRecord;
 	}
 
 	/**
@@ -366,8 +363,8 @@ public class BaseAction extends ActionSupport implements ActionInterface {
 		} catch (final ApplicationException e) {
 			BaseAction.logger.error(e.getMessage(), e);
 		}
-		if (Objects.nonNull(this.userSession)) {
-			this.userSession.clear();
+		if (Objects.nonNull(this.session)) {
+			this.session.clear();
 		}
 
 		return ResultConstants.RESULT_SUCCESS;
@@ -439,7 +436,10 @@ public class BaseAction extends ActionSupport implements ActionInterface {
 
 	@Override
 	public void setSession(final Map<String, Object> session) {
-		this.userSession = session;
+		if (BaseAction.logger.isDebugEnabled()) {
+			session.forEach((k, v) -> BaseAction.logger.debug("Adding {} to the session map with a value of {}", k, v));
+		}
+		this.session = session;
 	}
 
 	/**
@@ -447,11 +447,11 @@ public class BaseAction extends ActionSupport implements ActionInterface {
 	 * This method sets the stored {@link SessionsRecord} that is tied to the current action.
 	 * </p>
 	 *
-	 * @param session
+	 * @param sessionsRecord
 	 *            Our desired {@link SessionsRecord}
 	 */
-	public void setSessionsRecord(final SessionsRecord session) {
-		this.session = session;
+	public void setSessionsRecord(final SessionsRecord sessionsRecord) {
+		this.sessionsRecord = sessionsRecord;
 	}
 
 	/**
