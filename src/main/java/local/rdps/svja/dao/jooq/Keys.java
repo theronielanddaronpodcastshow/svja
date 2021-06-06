@@ -58,7 +58,6 @@ public class Keys {
     public static final UniqueKey<ProjectsRecord> PK_PROJECTS = Internal.createUniqueKey(Projects.PROJECTS, DSL.name("pk_projects"), new TableField[] { Projects.PROJECTS.ID }, true);
     public static final UniqueKey<ProjectsRecord> SQLITE_AUTOINDEX_PROJECTS_1 = Internal.createUniqueKey(Projects.PROJECTS, DSL.name("sqlite_autoindex_projects_1"), new TableField[] { Projects.PROJECTS.ID }, true);
     public static final UniqueKey<SessionsRecord> PK_SESSIONS = Internal.createUniqueKey(Sessions.SESSIONS, DSL.name("pk_sessions"), new TableField[] { Sessions.SESSIONS.ID }, true);
-    public static final UniqueKey<SessionsRecord> SQLITE_AUTOINDEX_SESSIONS_1 = Internal.createUniqueKey(Sessions.SESSIONS, DSL.name("sqlite_autoindex_sessions_1"), new TableField[] { Sessions.SESSIONS.ID }, true);
     public static final UniqueKey<UserGroupsRecord> PK_USER_GROUPS = Internal.createUniqueKey(UserGroups.USER_GROUPS, DSL.name("pk_user_groups"), new TableField[] { UserGroups.USER_GROUPS.USER_ID, UserGroups.USER_GROUPS.GROUP_ID }, true);
     public static final UniqueKey<UsersRecord> PK_USERS = Internal.createUniqueKey(Users.USERS, DSL.name("pk_users"), new TableField[] { Users.USERS.ID }, true);
     public static final UniqueKey<UsersRecord> SQLITE_AUTOINDEX_USERS_1 = Internal.createUniqueKey(Users.USERS, DSL.name("sqlite_autoindex_users_1"), new TableField[] { Users.USERS.ID }, true);

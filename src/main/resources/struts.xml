@@ -25,9 +25,12 @@
             <result-type name="json" class="local.rdps.svja.util.ExtendedJsonResult"/>
         </result-types>
         <interceptors>
+            <interceptor name="cookieWriterInterceptor" class="local.rdps.svja.action.interceptor.CookieWriterInterceptor" />
             <interceptor name="finalizerInterceptor" class="local.rdps.svja.action.interceptor.FinalizerInterceptor"/>
             <interceptor name="parameterSanitizerInterceptor"
                          class="local.rdps.svja.action.interceptor.ParameterSanitizerInterceptor"/>
+            <interceptor name="sessionInterceptor" class="local.rdps.svja.action.interceptor.SessionInterceptor" />
+            <interceptor name="sessionWriterInterceptor" class="local.rdps.svja.action.interceptor.SessionWriterInterceptor" />
 
             <!-- API Interceptors -->
             <interceptor name="jsonErrorInterceptor" class="local.rdps.svja.action.interceptor.JsonErrorInterceptor"/>
@@ -38,27 +41,35 @@
              -->
             <interceptor-stack name="baseStack">
                 <interceptor-ref name="jsonErrorInterceptor"/>
+                <interceptor-ref name="sessionInterceptor" />
                 <interceptor-ref name="parameterSanitizerInterceptor"/>
                 <interceptor-ref name="json">
                     <param name="enableSMD">true</param>
                 </interceptor-ref>
-                <interceptor-ref name="defaultStack">
-                    <!-- Enable exception logging. -->
-                    <param name="exception.logEnabled">true</param>
-                    <param name="exception.logLevel">ERROR</param>
-                </interceptor-ref>
+                <interceptor-ref name="defaultStack" />
                 <interceptor-ref name="restInterceptor"/>
+                <interceptor-ref name="cookieWriterInterceptor" />
+                <interceptor-ref name="sessionWriterInterceptor" />
                 <interceptor-ref name="finalizerInterceptor"/>
+            </interceptor-stack>
+            <!-- This is a FULL stack designed to aid authentication. -->
+            <interceptor-stack name="loginStack">
+                <interceptor-ref name="jsonErrorInterceptor"/>
+                <interceptor-ref name="sessionInterceptor" />
+                <interceptor-ref name="parameterSanitizerInterceptor" />
+                <interceptor-ref name="defaultStack" />
+                <interceptor-ref name="cookieWriterInterceptor" />
+                <interceptor-ref name="sessionWriterInterceptor" />
+                <interceptor-ref name="finalizerInterceptor" />
             </interceptor-stack>
             <interceptor-stack name="fileStack">
                 <interceptor-ref name="jsonErrorInterceptor"/>
+                <interceptor-ref name="sessionInterceptor" />
                 <interceptor-ref name="parameterSanitizerInterceptor"/>
-                <interceptor-ref name="defaultStack">
-                    <!-- Enable exception logging. -->
-                    <param name="exception.logEnabled">true</param>
-                    <param name="exception.logLevel">ERROR</param>
-                </interceptor-ref>
+                <interceptor-ref name="defaultStack" />
                 <interceptor-ref name="restInterceptor"/>
+                <interceptor-ref name="cookieWriterInterceptor" />
+                <interceptor-ref name="sessionWriterInterceptor" />
                 <interceptor-ref name="finalizerInterceptor"/>
             </interceptor-stack>
         </interceptors>
@@ -101,6 +112,14 @@
 
         <!-- Mapping for unknown action handler -->
         <action name="unknownHandler" method="handleUnknownRequest" class="local.rdps.svja.action.BaseAction"/>
+
+        <!-- Authentication Actions -->
+        <action name="api/authenticate" method="authenticate" class="local.rdps.svja.action.AuthenticationAction">
+            <interceptor-ref name="loginStack" />
+            <param name="xssProtectionsPolicy">ANYTHING_GOES</param>
+            <param name="expectedHttpMethod">GET</param>
+            <param name="suppressEmptyParameters">true</param>
+        </action>
 
         <!-- General Actions -->
         <action name="api/files" class="local.rdps.svja.action.FilesAction"/>

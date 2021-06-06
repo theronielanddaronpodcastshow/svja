@@ -358,20 +358,8 @@ public class ValidationUtils {
 	private static final Pattern URL_GENERAL = Pattern
 			.compile("^[hH][tT][tT][pP][sS]?://" + ValidationUtils.A_PARTIAL_REG_EX_RFC_COMPLIANT_HOST_AND_IP
 					+ "(:(80|443|8080))?" + ValidationUtils.A_PARTIAL_REG_EX_QUERY_STRING + '$');
-	private static final Pattern URL_GOVERNMENT = Pattern
-			.compile("^[hH][tT][tT][pP][sS]?://([a-zA-Z0-9\\\\-]+[.])+gov(:(80|443|8080))?"
-					+ ValidationUtils.A_PARTIAL_REG_EX_QUERY_STRING + '$');
-	/**
-	 * Accepts absolute URLs and relative URLs
-	 */
-	private static final Pattern URL_TECHPORT = Pattern.compile('('
-			+ "^[hH][tT][tT][pP][sS]?://(?:(?:10[.]123[.]1[.]2[56]|[tT][eE][cC][hH][pP][oO][rR][tT](?:[-][sS][tT][aA][gG][iI][nN][gG])?[.][nN][aA][sS][aA][.][gG][oO][vV])(:(80|443))?|(?:localhost|127.0.0.1)(:8080)?)"
-			+ ValidationUtils.A_PARTIAL_REG_EX_QUERY_STRING + ')' + "|(^"
-			+ ValidationUtils.A_PARTIAL_REG_EX_QUERY_STRING + ")$");
 	private static final Pattern USERNAME = Pattern.compile("^[a-zA-Z0-9][a-zA-Z0-9.]{1,25}$");
-	private static final Pattern UUPIC = Pattern.compile("^\\d{5,13}$");
 	private static final Pattern WEB_TOKEN = Pattern.compile("^" + ValidationUtils.A_PARTIAL_REG_EX_WEB_TOKEN + "$");
-
 	private static final Pattern WHITESPACE_OR_EMPTY = Pattern.compile("^[\\p{Space}]*$");
 
 	private static Map<String, ValidationUtils.Type> getFileTypesMap() {
@@ -1903,36 +1891,6 @@ public class ValidationUtils {
 
 	/**
 	 * <p>
-	 * Checks if a string is a valid government URL.
-	 * </p>
-	 *
-	 * @param string
-	 *            The String to examine
-	 * @return {@code true} iff the provided input is a valid URL going to a .gov website
-	 */
-	@Contract("null -> false")
-	public static boolean isUrlGovernment(final @Nullable CharSequence string) {
-		return !ValidationUtils.isEmpty(string) && ValidationUtils.URL_GOVERNMENT.matcher(string).matches();
-	}
-
-	/**
-	 * <p>
-	 * Checks if a string is a valid TechPort URL.
-	 * <p>
-	 * This works for both absolute URLs and for relative URLs.
-	 * </p>
-	 *
-	 * @param string
-	 *            The String to examine
-	 * @return {@code true} iff the provided input is a valid URL going to TechPort
-	 */
-	@Contract("null -> false")
-	public static boolean isUrlTechport(final @Nullable CharSequence string) {
-		return !ValidationUtils.isEmpty(string) && ValidationUtils.URL_TECHPORT.matcher(string).matches();
-	}
-
-	/**
-	 * <p>
 	 * Checks to see if a valid general URL with path and attributes
 	 * </p>
 	 *
@@ -1957,20 +1915,6 @@ public class ValidationUtils {
 	@Contract("null -> false")
 	public static boolean isUserName(final @Nullable CharSequence string) {
 		return !ValidationUtils.isEmpty(string) && ValidationUtils.USERNAME.matcher(string).matches();
-	}
-
-	/**
-	 * <p>
-	 * Tests to see if the given string is a properly formed to be a UUPIC.
-	 * </p>
-	 *
-	 * @param string
-	 *            The alleged UUPIC
-	 * @return {@code true} iff the string fits the form of a UUPIC
-	 */
-	@Contract("null -> false")
-	public static boolean isUUPIC(final @Nullable CharSequence string) {
-		return !ValidationUtils.isEmpty(string) && ValidationUtils.UUPIC.matcher(string).matches();
 	}
 
 	/**

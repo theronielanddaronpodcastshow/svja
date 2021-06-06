@@ -3,7 +3,6 @@ package local.rdps.svja.action;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,9 +51,6 @@ public abstract class RestAction extends BaseAction {
 	private JsonErrorVo error;
 	private String nonce;
 	private REQUEST_METHOD requestMethod = REQUEST_METHOD.INDEX;
-	private String sessionId;
-
-	private String token;
 
 	/**
 	 * Create a new object
@@ -189,24 +185,6 @@ public abstract class RestAction extends BaseAction {
 	}
 
 	/**
-	 * Get the session Id
-	 *
-	 * @return
-	 */
-	public Optional<String> getSessionId() {
-		return Optional.ofNullable(this.sessionId);
-	}
-
-	/**
-	 * Get the web token
-	 *
-	 * @return
-	 */
-	public String getToken() {
-		return this.token;
-	}
-
-	/**
 	 * Index the objects
 	 *
 	 * @return
@@ -261,24 +239,6 @@ public abstract class RestAction extends BaseAction {
 	 */
 	public void setRequestMethod(final REQUEST_METHOD requestMethod) {
 		this.requestMethod = requestMethod;
-	}
-
-	/**
-	 * Set the session Id
-	 *
-	 * @param sessionId
-	 */
-	public void setSessionId(final String sessionId) {
-		this.sessionId = sessionId;
-	}
-
-	/**
-	 * Set the web token
-	 *
-	 * @param token
-	 */
-	public void setToken(final String token) {
-		this.token = token;
 	}
 
 	/**

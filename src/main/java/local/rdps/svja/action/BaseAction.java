@@ -13,13 +13,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import local.rdps.svja.action.preresultlistener.SessionWriter;
-import local.rdps.svja.blo.SessionBloGateway;
-import local.rdps.svja.constant.AuthenticationConstants;
-import local.rdps.svja.constant.CommonConstants;
-import local.rdps.svja.constant.ResultConstants;
-import local.rdps.svja.dao.jooq.tables.records.SessionsRecord;
-import local.rdps.svja.exception.IllegalParameterException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -30,8 +23,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
+import local.rdps.svja.action.preresultlistener.CookieWriter;
+import local.rdps.svja.action.preresultlistener.SessionWriter;
+import local.rdps.svja.blo.SessionBloGateway;
+import local.rdps.svja.constant.AuthenticationConstants;
+import local.rdps.svja.constant.CommonConstants;
 import local.rdps.svja.constant.ErrorConstants;
+import local.rdps.svja.constant.ResultConstants;
+import local.rdps.svja.dao.jooq.tables.records.SessionsRecord;
 import local.rdps.svja.exception.ApplicationException;
+import local.rdps.svja.exception.IllegalParameterException;
 import local.rdps.svja.exception.NotFoundException;
 import local.rdps.svja.util.ValidationUtils;
 
@@ -68,13 +69,13 @@ public class BaseAction extends ActionSupport implements ActionInterface {
 	private SessionsRecord session;
 	private boolean sessionDeleted;
 	private boolean sessionIdHasChanged;
+	protected HttpServletRequest request;
+	protected HttpServletResponse response;
+	protected Map<String, Object> userSession;
 	/**
 	 * Used to track how long an action takes
 	 */
 	public final Instant startTime = Instant.now();
-	protected HttpServletRequest request;
-	protected HttpServletResponse response;
-	protected Map<String, Object> userSession;
 
 	/**
 	 * Filters potentially harmful parameters
@@ -117,8 +118,7 @@ public class BaseAction extends ActionSupport implements ActionInterface {
 			this.session = SessionBloGateway.createNewSessionOrUpdateLastAccessed(null);
 			if (BaseAction.logger.isDebugEnabled()) {
 				BaseAction.logger.debug("The session is changing from {} to {}",
-						this.cookies.get(AuthenticationConstants.SESSION_COOKIE_NAME),
-						this.session.getId());
+						this.cookies.get(AuthenticationConstants.SESSION_COOKIE_NAME), this.session.getId());
 			}
 			this.cookies.put(AuthenticationConstants.SESSION_COOKIE_NAME, this.session.getId().toString());
 			this.sessionIdHasChanged = true;
@@ -126,8 +126,6 @@ public class BaseAction extends ActionSupport implements ActionInterface {
 
 		return this.cookies.get(AuthenticationConstants.SESSION_COOKIE_NAME);
 	}
-
-
 
 	/**
 	 * <p>
@@ -165,16 +163,15 @@ public class BaseAction extends ActionSupport implements ActionInterface {
 				}
 			}
 		} else {
-			// get the TSESSIONID cookie if it exists.
-			final Optional<Cookie> optionalTSessionId = Objects
+			// get the session cookie if it exists
+			final Optional<Cookie> optionalSessionId = Objects
 					.isNull(this.request.getCookies())
-					? Optional.empty()
-					: Arrays.stream(this.request.getCookies())
-					.filter(cookie -> Objects.equals(
-							AuthenticationConstants.SESSION_COOKIE_NAME, cookie.getName())
-							&& !ValidationUtils.isEmpty(cookie.getValue()))
-					.findFirst();
-			final Optional<String> sessionId = optionalTSessionId.map(Cookie::getValue);
+							? Optional.empty()
+							: Arrays.stream(this.request.getCookies())
+									.filter(cookie -> Objects.equals(AuthenticationConstants.SESSION_COOKIE_NAME,
+											cookie.getName()) && !ValidationUtils.isEmpty(cookie.getValue()))
+									.findFirst();
+			final Optional<String> sessionId = optionalSessionId.map(Cookie::getValue);
 
 			if (BaseAction.logger.isDebugEnabled()) {
 				BaseAction.logger.debug("We are requesting that the current session (detected as {}) be deleted",
@@ -262,10 +259,12 @@ public class BaseAction extends ActionSupport implements ActionInterface {
 	 */
 	public Optional<String> getSessionId() {
 		final String sessionId;
-		if (ValidationUtils.isEmpty(this.session)) {
+		if (Objects.isNull(this.session) || (ValidationUtils.isEmpty(this.session.getId()))) {
 			sessionId = this.cookies.get(AuthenticationConstants.SESSION_COOKIE_NAME);
+			BaseAction.logger.error("The session id is {}", sessionId);
 		} else {
-			sessionId = this.session.getId().toString();
+			sessionId = this.session.getId();
+			BaseAction.logger.error("The session id is {}", sessionId);
 		}
 		if (this.sessionIdHasChanged) {
 			if (BaseAction.logger.isDebugEnabled()) {
@@ -286,12 +285,11 @@ public class BaseAction extends ActionSupport implements ActionInterface {
 		if (Objects.nonNull(this.request)) {
 			final Optional<Cookie> cookieOptional = Objects
 					.isNull(this.request.getCookies())
-					? Optional.empty()
-					: Arrays.stream(this.request.getCookies())
-					.filter(cookie -> Objects.equals(
-							AuthenticationConstants.SESSION_COOKIE_NAME, cookie.getName())
-							&& !ValidationUtils.isEmpty(cookie.getValue()))
-					.findFirst();
+							? Optional.empty()
+							: Arrays.stream(this.request.getCookies())
+									.filter(cookie -> Objects.equals(AuthenticationConstants.SESSION_COOKIE_NAME,
+											cookie.getName()) && !ValidationUtils.isEmpty(cookie.getValue()))
+									.findFirst();
 
 			if (BaseAction.logger.isDebugEnabled()) {
 				BaseAction.logger.debug(
@@ -300,8 +298,8 @@ public class BaseAction extends ActionSupport implements ActionInterface {
 								: (" -- the cookie wasn't found " + cookieOptional.map(Cookie::getName)));
 			}
 
-			cookieOptional.ifPresent(cookie -> this.cookies.put(AuthenticationConstants.SESSION_COOKIE_NAME,
-					cookie.getValue()));
+			cookieOptional.ifPresent(
+					cookie -> this.cookies.put(AuthenticationConstants.SESSION_COOKIE_NAME, cookie.getValue()));
 			return cookieOptional.map(Cookie::getValue);
 		}
 

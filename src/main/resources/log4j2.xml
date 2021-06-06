@@ -21,7 +21,7 @@
         <Logger name="org.apache.struts2" level="warn">
             <AppenderRef ref="ROLL"/>
         </Logger>
-        <Root level="info">
+        <Root level="debug">
             <AppenderRef ref="ROLL"/>
         </Root>
     </Loggers>

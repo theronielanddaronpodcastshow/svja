@@ -3,6 +3,7 @@ package local.rdps.svja.dao;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -12,6 +13,7 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.SelectQuery;
@@ -19,6 +21,7 @@ import org.jooq.Table;
 import org.jooq.UniqueKey;
 import org.jooq.UpdatableRecord;
 import org.jooq.impl.DSL;
+import org.jooq.impl.SQLDataType;
 
 import local.rdps.svja.construct.ItemVo;
 import local.rdps.svja.exception.ApplicationException;
@@ -75,6 +78,44 @@ class CommonDao {
 
 	/**
 	 * <p>
+	 * This method uses the provided {@link Condition} to retrieve a collection containing that, and only that, record
+	 * from the database. If no condition is present, all records of that type are returned.
+	 * </p>
+	 *
+	 * @param <I>
+	 *            A class that extends {@link ItemVo}
+	 * @param item
+	 *            An instance of the item that we would like to retrieve
+	 * @param condition
+	 *            The conditions to use when trying to get the item(s)
+	 * @return A collection of filled out VOs
+	 * @throws ApplicationException
+	 *             Iff there is an error trying to connect to the database
+	 */
+	static <I extends ItemVo> Collection<I> getItems(final @NotNull I item, final @NotNull Condition condition)
+			throws ApplicationException {
+		final Table<Record> t = item.getReferenceTable();
+		if (Objects.isNull(t)) {
+			CommonDao.logger.error("Our ItemVo implementation is lacking a reference table");
+			return Collections.emptyList();
+		}
+
+		try (final Connection readConn = DatabaseManager.getConnection(false)) {
+			final DSLContext readContext = DatabaseManager.getBuilder(readConn);
+			try (final SelectQuery<Record> query = readContext.selectQuery(t)) {
+				query.addConditions(condition);
+
+				return (Collection<I>) query.fetchInto(item.getClass());
+			}
+		} catch (final @NotNull SQLException e) {
+			CommonDao.logger.error(e.getMessage(), e);
+		}
+
+		return Collections.emptyList();
+	}
+
+	/**
+	 * <p>
 	 * This method attempts to insert/update the given item in the database.
 	 * </p>
 	 * <p>
@@ -103,9 +144,68 @@ class CommonDao {
 		item.setModifiedBy(DatabaseManager.getUid());
 		item.setModifiedDate(Instant.now());
 
+		final DSLContext writeContext = DatabaseManager.getBuilder();
+		final UpdatableRecord<R> record = writeContext.newRecord(t, item);
+		// // Use the VO's dirty fields list to determine what changed
+		// Arrays.stream(record.fields()).forEach(field -> record.changed(field, false));
+		// for (final String field : item.getDirtyFields()) {
+		// if (!ValidationUtils.isEmpty(field)) {
+		// try {
+		// record.changed(CommonUtils.convertCamelCaseToUnderscore(field), true);
+		// } catch (final IllegalArgumentException e) {
+		// CommonDao.logger.error(e.getMessage(), e);
+		// }
+		// } else {
+		// CommonDao.logger.error("Ignoring empty field name in the dirty fields list");
+		// }
+		// }
+		return Optional.ofNullable(CommonDao.upsertItem(record).map(r -> (I) r.into(item.getClass())).orElse(null));
+	}
+
+	/**
+	 * <p>
+	 * This method attempts to insert/update the given item in the database.
+	 * </p>
+	 * <p>
+	 * <strong>Note:</strong> this method does not update or insert any child items.
+	 * </p>
+	 *
+	 * @param <R>
+	 *            The jooq-generated {@link Record} specific to the {@link ItemVo}
+	 * @param item
+	 *            The item to be upserted
+	 * @return The new/updated record or {@link Optional#empty()} if nothing was updated
+	 * @throws ApplicationException
+	 *             If too many rows were updated or we didn't like the item being upserted
+	 */
+	static <R extends UpdatableRecord<R>> Optional<UpdatableRecord<R>> upsertItem(
+			final @NotNull UpdatableRecord<R> item) throws ApplicationException {
+		final Table<R> t = item.getTable();
+		if (Objects.isNull(t)) {
+			CommonDao.logger.error("Our ItemVo implementation is lacking a reference table");
+			return Optional.empty();
+		}
+
+		// Set the modified* data
+		if (Arrays.stream(item.fields())
+				.anyMatch(field -> field.getUnqualifiedName().equalsIgnoreCase(DSL.name("modified_by")))) {
+			item.set(DSL.field("modified_by", SQLDataType.BIGINT), DatabaseManager.getUid());
+			item.changed("modified_by", true);
+		}
+		if (Arrays.stream(item.fields())
+				.anyMatch(field -> field.getUnqualifiedName().equalsIgnoreCase(DSL.name("modified_date")))) {
+			item.set(DSL.field("modified_date", SQLDataType.INSTANT), Instant.now());
+			item.changed("modified_date", true);
+		}
+		if (Arrays.stream(item.fields())
+				.anyMatch(field -> field.getUnqualifiedName().equalsIgnoreCase(DSL.name("modified_date")))) {
+			item.set(DSL.field("last_accessed", SQLDataType.LOCALDATETIME(0)), LocalDateTime.now());
+			item.changed("last_accessed", true);
+		}
+
 		try (final Connection writeConn = DatabaseManager.getConnection(true)) {
-			final DSLContext writeContext = DatabaseManager.getBuilder(writeConn);
-			final UpdatableRecord<R> record = writeContext.newRecord(t, item);
+			DatabaseManager.getBuilder(writeConn);
+			DatabaseManager.setConfiguration(item, writeConn);
 			// // Use the VO's dirty fields list to determine what changed
 			// Arrays.stream(record.fields()).forEach(field -> record.changed(field, false));
 			// for (final String field : item.getDirtyFields()) {
@@ -119,18 +219,15 @@ class CommonDao {
 			// CommonDao.logger.error("Ignoring empty field name in the dirty fields list");
 			// }
 			// }
-			record.changed("modified_by", true);
-			record.changed("modified_date", true);
 
 			final int updated;
 			final UniqueKey<R> pk = t.getPrimaryKey();
-			if (pk.getFields().stream().anyMatch(field -> Objects.isNull(record.getValue(field)))) {
-				updated = record.insert();
+			if (pk.getFields().stream().anyMatch(field -> Objects.isNull(item.getValue(field)))) {
+				updated = item.insert();
 			} else {
-				Arrays.stream(record.fields()).filter(field -> pk.getFields().contains(field))
-						.filter(field -> Objects.nonNull(record.get(field)))
-						.forEach(field -> record.changed(field, true));
-				updated = record.update();
+				Arrays.stream(item.fields()).filter(field -> pk.getFields().contains(field))
+						.filter(field -> Objects.nonNull(item.get(field))).forEach(field -> item.changed(field, true));
+				updated = item.update();
 			}
 
 			// Check that we didn't delete too many rows
@@ -138,13 +235,13 @@ class CommonDao {
 				writeConn.setAutoCommit(false);
 				writeConn.rollback();
 				throw new ApplicationException("We updated too many items (" + Integer.valueOf(updated)
-						+ " updated, but we only expected 1) so we rolled back:" + record);
+						+ " updated, but we only expected 1) so we rolled back:" + item);
 			}
 			if (updated == 0)
 				return Optional.empty();
 
-			record.refresh();
-			return Optional.ofNullable((I) record.into(item.getClass()));
+			item.refresh();
+			return Optional.ofNullable(item);
 		} catch (final @NotNull SQLException e) {
 			CommonDao.logger.error(e.getMessage(), e);
 		}

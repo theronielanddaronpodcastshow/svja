@@ -487,7 +487,6 @@ public class ParameterSanitizerInterceptor extends BaseInterceptor {
 		private static final Pattern _PATTERN_UP_TO_A_COUPLE_OF_DIGITS = Pattern.compile("^[0-9]{0,2}$");
 		/**
 		 * At the moment, these are added for some reason by the Java HTML Sanitizer if curly brackets are present
-		 * (TECHPORT-8048)
 		 */
 		private static final Pattern EMPTY_HTML_COMMENTS = Pattern.compile("[{]<![-]{2} [-]{2}>");
 		/**

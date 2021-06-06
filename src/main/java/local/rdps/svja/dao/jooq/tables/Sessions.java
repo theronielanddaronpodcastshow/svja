@@ -18,7 +18,6 @@ import local.rdps.svja.dao.jooq.tables.records.SessionsRecord;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Identity;
 import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
@@ -65,7 +64,7 @@ public class Sessions extends TableImpl<SessionsRecord> {
     /**
      * The column <code>sessions.id</code>.
      */
-    public final TableField<SessionsRecord, Integer> ID = createField(DSL.name("id"), SQLDataType.INTEGER.nullable(false).identity(true), this, "");
+    public final TableField<SessionsRecord, String> ID = createField(DSL.name("id"), SQLDataType.CLOB.nullable(false), this, "");
 
     /**
      * The column <code>sessions.session_data</code>.
@@ -124,12 +123,6 @@ public class Sessions extends TableImpl<SessionsRecord> {
 
     @Override
     @NotNull
-    public Identity<SessionsRecord, Integer> getIdentity() {
-        return (Identity<SessionsRecord, Integer>) super.getIdentity();
-    }
-
-    @Override
-    @NotNull
     public UniqueKey<SessionsRecord> getPrimaryKey() {
         return Keys.PK_SESSIONS;
     }
@@ -137,7 +130,7 @@ public class Sessions extends TableImpl<SessionsRecord> {
     @Override
     @NotNull
     public List<UniqueKey<SessionsRecord>> getKeys() {
-        return Arrays.<UniqueKey<SessionsRecord>>asList(Keys.PK_SESSIONS, Keys.SQLITE_AUTOINDEX_SESSIONS_1);
+        return Arrays.<UniqueKey<SessionsRecord>>asList(Keys.PK_SESSIONS);
     }
 
     @Override
@@ -176,7 +169,7 @@ public class Sessions extends TableImpl<SessionsRecord> {
 
     @Override
     @NotNull
-    public Row3<Integer, String, LocalDateTime> fieldsRow() {
+    public Row3<String, String, LocalDateTime> fieldsRow() {
         return (Row3) super.fieldsRow();
     }
 }

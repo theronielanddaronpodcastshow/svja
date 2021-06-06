@@ -4,16 +4,17 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.TimeZone;
 
-import com.opensymphony.xwork2.ActionContext;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts2.StrutsStatics;
 import org.apache.struts2.json.JSONException;
 
+import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.interceptor.ExceptionHolder;
 import com.opensymphony.xwork2.interceptor.Interceptor;
-import com.opensymphony.xwork2.interceptor.PreResultListener;
 
 import local.rdps.svja.action.BaseAction;
 import local.rdps.svja.action.RestAction;
@@ -23,8 +24,6 @@ import local.rdps.svja.exception.ApplicationException;
 import local.rdps.svja.exception.IllegalParameterException;
 import local.rdps.svja.util.ValidationUtils;
 import local.rdps.svja.vo.JsonErrorVo;
-
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * <p>
@@ -125,7 +124,7 @@ public class JsonErrorInterceptor implements Interceptor {
 		JsonErrorInterceptor.logExceptionData(error);
 
 		// setup error that displays on the front-end
-		if(action instanceof RestAction) {
+		if (action instanceof RestAction) {
 			final JsonErrorVo jsonError = JsonErrorInterceptor.createJsonErrorObject(error);
 			((RestAction) action).setError(jsonError);
 		}

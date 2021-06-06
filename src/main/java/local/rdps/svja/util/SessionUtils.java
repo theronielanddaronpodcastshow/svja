@@ -15,7 +15,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import org.xerial.snappy.SnappyInputStream;
 import org.xerial.snappy.SnappyOutputStream;
 
+import local.rdps.svja.constant.CommonConstants;
 import local.rdps.svja.exception.ApplicationException;
 import local.rdps.svja.util.serialiser.SerialisableDeterminant;
 
@@ -239,6 +245,96 @@ public class SessionUtils {
 		}
 
 		return new HashMap<>(0);
+	}
+
+	/**
+	 * <p>
+	 * This method creates, updates, or deletes the specified cookie. If {@code cookieValue} is {@code null} and the
+	 * cookie is in the request we will delete the cookie. If the {@code cookieValue} is not {@code null} we will check
+	 * if the cookie is in the request; if it is, then we will update the value and set it in the response otherwise we
+	 * will create a new session cookie and place it in the response.
+	 * </p>
+	 *
+	 * @param request
+	 *            The request from the client; if not provided, we assume that we are to insert or delete the cookie
+	 * @param response
+	 *            The response that is going to go to the client
+	 * @param cookieName
+	 *            The name of the cookie to create, update, or delete
+	 * @param cookieValue
+	 *            The value that the cookie should be set to or {@code null} if the cookie should be deleted
+	 */
+	public static void manageCookie(final @Nullable HttpServletRequest request,
+			final @NotNull HttpServletResponse response, final @NotNull String cookieName,
+			final @Nullable String cookieValue) {
+		if (Objects.isNull(response)) {
+			SessionUtils.logger.error("The response is null, so we cannot set the cookie {} to {}", cookieName,
+					cookieValue);
+			return;
+		}
+		if (ValidationUtils.isEmpty(cookieName)) {
+			SessionUtils.logger.error("The cookieName is null or empty, so we cannot set the cookie {} to {}",
+					cookieName, cookieValue);
+			return;
+		}
+
+		final Optional<Cookie> cookieOptional = Objects.isNull(request.getCookies()) ? Optional.empty()
+				: Arrays.stream(request.getCookies()).filter(cookie -> Objects.equals(cookieName, cookie.getName())
+						&& !ValidationUtils.isEmpty(cookie.getValue())).findFirst();
+
+		final Cookie cookie;
+		if (ValidationUtils.isEmpty(cookieValue)) {
+			// We are deleting
+			if (SessionUtils.logger.isDebugEnabled()) {
+				SessionUtils.logger.debug("We are deleting the cookie {}", cookieName);
+			}
+
+			cookie = new Cookie(cookieName, CommonConstants.EMPTY_STRING);
+			cookie.setPath("/");
+			cookie.setHttpOnly(true);
+			cookie.setSecure(request.isSecure());
+			cookie.setMaxAge(0);
+		} else if (cookieOptional.isPresent()) {
+			// We might be updating (but only if the value is different)
+			if (Objects.equals(cookieValue, cookieOptional.get().getValue())) {
+				// Everything is fine and there is nothing to be done because the data matches
+				if (SessionUtils.logger.isDebugEnabled()) {
+					SessionUtils.logger.debug("The data of the {} cookie matches what we were wanting to push -- {}",
+							cookieName, cookieValue);
+				}
+
+				return;
+			}
+
+			// We are updating
+			if (SessionUtils.logger.isDebugEnabled()) {
+				SessionUtils.logger.debug("We are updating the cookie {} from {} to {}", cookieName,
+						cookieOptional.get().getValue(), cookieValue);
+			}
+
+			cookie = new Cookie(cookieName, cookieValue);
+			cookie.setValue(cookieValue);
+			cookie.setPath("/");
+			cookie.setHttpOnly(true);
+			cookie.setSecure(request.isSecure());
+		} else {
+			// We are creating the cookie
+			if (SessionUtils.logger.isDebugEnabled()) {
+				SessionUtils.logger.debug("We are creating the cookie {} with a value of {}", cookieName, cookieValue);
+			}
+
+			cookie = new Cookie(cookieName, cookieValue);
+			cookie.setPath("/");
+			cookie.setHttpOnly(true);
+			cookie.setSecure(request.isSecure());
+			cookie.setMaxAge(-1);
+		}
+
+		// Add the cookie
+		response.addCookie(cookie);
+
+		// Since we set a cookie, tell any proxies to not send this request to other users
+		response.addHeader("Cache-Control", "private");
 	}
 
 	/**

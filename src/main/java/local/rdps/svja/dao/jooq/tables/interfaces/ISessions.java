@@ -29,13 +29,13 @@ public interface ISessions extends Serializable {
     /**
      * Setter for <code>sessions.id</code>.
      */
-    public void setId(@NotNull Integer value);
+    public void setId(@NotNull String value);
 
     /**
      * Getter for <code>sessions.id</code>.
      */
     @NotNull
-    public Integer getId();
+    public String getId();
 
     /**
      * Setter for <code>sessions.session_data</code>.

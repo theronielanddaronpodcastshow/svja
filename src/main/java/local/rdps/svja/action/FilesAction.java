@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import local.rdps.svja.blo.FilesBloGateway;
 import local.rdps.svja.constant.ResultConstants;
 import local.rdps.svja.dao.CommonDaoGateway;
+import local.rdps.svja.dao.DatabaseManager;
 import local.rdps.svja.dao.PermissionsDaoGateway;
 import local.rdps.svja.exception.ApplicationException;
 import local.rdps.svja.util.ValidationUtils;
@@ -69,9 +70,7 @@ public class FilesAction extends RestAction {
 			return this.permissions;
 
 		final UserVo user = new UserVo();
-		// TODO Restore me
-		// user.setId(DatabaseManager.getUid());
-		user.setId(Long.valueOf(2L));
+		user.setId(DatabaseManager.getUid());
 		try {
 			this.permissions = PermissionsDaoGateway.getUserPermissions(user);
 		} catch (final ApplicationException e) {

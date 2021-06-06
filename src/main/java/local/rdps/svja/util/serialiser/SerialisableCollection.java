@@ -15,6 +15,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
+import local.rdps.svja.constant.CommonConstants;
+
 /**
  * <p>
  * This class allows us to serialise and deserialise collections, enforcing type-safety and things of that nature.
@@ -156,7 +158,7 @@ public class SerialisableCollection<T> implements Externalizable, Collection<T> 
 	@Override
 	public @NotNull Object[] toArray() {
 		if (Objects.isNull(this.collection))
-			return Constants.EMPTY_OBJECT_ARRAY;
+			return CommonConstants.EMPTY_OBJECT_ARRAY;
 		return this.collection.toArray();
 	}
 

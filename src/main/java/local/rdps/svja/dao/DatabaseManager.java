@@ -92,7 +92,7 @@ public final class DatabaseManager {
 
 	/**
 	 * Returns a configuration that can be tied to a record for the given connection. The configuration will be properly
-	 * set for TechPort.
+	 * set for SVJA.
 	 *
 	 * @param conn
 	 *            The open connection through which the record will persist or searched for

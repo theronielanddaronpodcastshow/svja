@@ -84,7 +84,7 @@ CREATE INDEX "project_files_fid_index" ON "project_files" ("file_id");
 
 CREATE TABLE "sessions"
 (
-    "id"            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+    "id"            TEXT NOT NULL PRIMARY KEY UNIQUE,
     "session_data"  TEXT,
     "last_accessed" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
