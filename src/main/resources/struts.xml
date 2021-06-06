@@ -52,16 +52,6 @@
                 <interceptor-ref name="sessionWriterInterceptor" />
                 <interceptor-ref name="finalizerInterceptor"/>
             </interceptor-stack>
-            <!-- This is a FULL stack designed to aid authentication. -->
-            <interceptor-stack name="loginStack">
-                <interceptor-ref name="jsonErrorInterceptor"/>
-                <interceptor-ref name="sessionInterceptor" />
-                <interceptor-ref name="parameterSanitizerInterceptor" />
-                <interceptor-ref name="defaultStack" />
-                <interceptor-ref name="cookieWriterInterceptor" />
-                <interceptor-ref name="sessionWriterInterceptor" />
-                <interceptor-ref name="finalizerInterceptor" />
-            </interceptor-stack>
             <interceptor-stack name="fileStack">
                 <interceptor-ref name="jsonErrorInterceptor"/>
                 <interceptor-ref name="sessionInterceptor" />
@@ -115,7 +105,6 @@
 
         <!-- Authentication Actions -->
         <action name="api/authenticate" method="authenticate" class="local.rdps.svja.action.AuthenticationAction">
-            <interceptor-ref name="loginStack" />
             <param name="xssProtectionsPolicy">ANYTHING_GOES</param>
             <param name="expectedHttpMethod">GET</param>
             <param name="suppressEmptyParameters">true</param>
