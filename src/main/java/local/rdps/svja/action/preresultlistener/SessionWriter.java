@@ -61,7 +61,7 @@ public class SessionWriter implements PreResultListener {
 					if (Objects.equals(this.action.getSessionsRecord().getSessionData(), sessionData)) {
 						// If zero data is being updated, just update the last accessed time
 						SessionBloGateway.createNewSessionOrUpdateLastAccessed(
-								this.action.getSessionsRecord().getId().toString());
+								this.action.getSessionsRecord().getId());
 						if (SessionWriter.logger.isDebugEnabled()) {
 							SessionWriter.logger.debug("We updated the last access time for our session, {}",
 									this.action.getSessionsRecord().getId());
