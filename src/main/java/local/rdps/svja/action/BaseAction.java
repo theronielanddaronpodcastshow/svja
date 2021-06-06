@@ -85,8 +85,7 @@ public class BaseAction extends ActionSupport implements ActionInterface {
 		final boolean allowedParameterName = !parameterName.contains("session")
 				&& !Objects.equals("request", parameterName) && !parameterName.contains("dojo")
 				&& !parameterName.contains("struts") && !parameterName.contains("application")
-				&& !parameterName.contains("servlet") && !parameterName.contains("parameters")
-				&& !parameterName.contains("userSession");
+				&& !parameterName.contains("servlet") && !parameterName.contains("parameters");
 
 		return allowedParameterName;
 	}
