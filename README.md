@@ -46,6 +46,8 @@ Below are some of the _major_ vulnerabilities in the system, by action.
 	 - Personally identifiable information (PII) bleed
 	 - Sensitive information bleed
    - Log injection
+   - Race condition
+	 - Time of check, time of use (TOCTOU)
    - Sensitive data in URL
 3. /api/projects
    - Cross-site request forgery (CSRF)
