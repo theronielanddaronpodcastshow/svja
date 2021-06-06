@@ -17,20 +17,145 @@ mvn clean package
 This creates a WAR in target -- svja.war. Simply place the WAR in your tomcat webapps folder. In a default Tomcat build go to http://127.0.0.1:8080/svja to access the application.
 
 ## Current vulnerabilities ##
-/api/projects
-	Cross-site scripting (XSS) via encoding
-	Insecure deserialisation (OGNL, Struts, JSON -- no bytecode)
-		Path traversal (read-only)
-		Arbitrary object creation
-		Arbitrary method call
-		Session hijacking
-		Session bypass
-		Authentication bypass
-		Insecure direct object reference
-	Insecure serialisation
-		Personally identifiable information (PII) bleed
-		Sensitive information bleed
-	Denial of service
+Below are some of the _major_ vulnerabilities in the system, by action.
+
+1. /api/authenticate
+   - Cross-site request forgery (CSRF)
+   - Denial of service (DOS)
+   - Insecure deserialisation (OGNL, Struts, JSON -- no bytecode)
+	 - Arbitrary object creation
+	 - Arbitrary method call
+	 - Session hijacking
+	 - Session bypass
+	 - Authentication bypass
+   - Log injection
+   - Sensitive data in URL
+2. /api/files
+   - Cross-site request forgery (CSRF)
+   - Cross-site scripting (XSS) via encoding
+   - Denial of service (DOS)
+   - Insecure deserialisation (OGNL, Struts, JSON -- no bytecode)
+	 - Path traversal (read-only)
+	 - Arbitrary object creation
+	 - Arbitrary method call
+	 - Session hijacking
+	 - Session bypass
+	 - Authentication bypass
+	 - Insecure direct object reference
+   - Insecure serialisation
+	 - Personally identifiable information (PII) bleed
+	 - Sensitive information bleed
+   - Log injection
+   - Sensitive data in URL
+3. /api/projects
+   - Cross-site request forgery (CSRF)
+   - Cross-site scripting (XSS) via encoding
+	 Denial of service (DOS)
+   - Insecure deserialisation (OGNL, Struts, JSON -- no bytecode)
+	 - Path traversal (read-only)
+	 - Arbitrary object creation
+	 - Arbitrary method call
+	 - Session hijacking
+	 - Session bypass
+	 - Authentication bypass
+	 - Insecure direct object reference
+   - Insecure serialisation
+	 - Personally identifiable information (PII) bleed
+	 - Sensitive information bleed
+   - Log injection
+   - Sensitive data in URL
+
+## Default installed users ##
+```
+admin:admin (application administrator account)
+bill:baker (privileged user account)
+bob:barker (basic, read-only user account)
+```
+
+## Logging into the system ##
+```
+/api/authenticate?user.username=admin&user.password=admin
+/api/authenticate?user.username=bill&user.password=baker
+/api/authenticate?user.username=bob&user.password=barker
+```
+
+After authentication, hit any action you please using either JSON or Struts
+
+## Sample Struts authentication request ##
+```
+GET /svja/api/authenticate?user.username=bill&user.password=baker HTTP/1.1
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:88.0) Gecko/20100101 Firefox/88.0
+Host: localhost
+Accept: application/json, text/plain, */*
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Content-Length: 0
+DNT: 1
+Connection: close
+Cache-Control: max-age=0
+
+
+```
+
+## Sample JSON authentication request ##
+```
+GET /svja/api/authenticate HTTP/1.1
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:88.0) Gecko/20100101 Firefox/88.0
+Host: localhost
+Accept: application/json, text/plain, */*
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Content-Type: application/json
+Content-Length: 61
+DNT: 1
+Connection: close
+Cache-Control: max-age=0
+
+{
+  "user": {
+    "username": "bill",
+    "password": "baker"
+  }
+}
+```
+
+## Sample Struts request ##
+Remember to change the svjatoken
+```
+GET /svja/api/projects?projectId=1 HTTP/1.1
+Host: localhost
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:88.0) Gecko/20100101 Firefox/88.0
+Accept: application/json, text/plain, */*
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+DNT: 1
+Connection: close
+Cookie: svjatoken=RaMu5vhFBgL8goV6Ja1ffLnpmcixNuAL7fUP; Path=/; HttpOnly
+Cache-Control: max-age=0
+
+
+```
+
+## Sample JSON request ##
+Remember to change the svjatoken 
+```
+GET /svja/api/projects HTTP/1.1
+Host: localhost
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:88.0) Gecko/20100101 Firefox/88.0
+Accept: application/json, text/plain, */*
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Content-Type: application/json
+Content-Length: 19
+DNT: 1
+Connection: close
+Cookie: svjatoken=RaMu5vhFBgL8goV6Ja1ffLnpmcixNuAL7fUP; Path=/; HttpOnly
+Cache-Control: max-age=0
+
+{
+  projectId:1
+}
+```
 
 ## Remember ##
 This is a work-in-progress and we have many more vulnerabilities and things planned (to include a super vulnerable frontend and other super vulnerable applications) -- check back with us every couple of months and watch the Roniel and DaRon Podcast Show for updates, sample exploitation, and other ideas. We also encourage you to try to figure out how to mitigate or fix the vulnerabilities... breaking things is easy... it's mitigating, fixing, and securing that is hard.  Good luck and happy hunting!
