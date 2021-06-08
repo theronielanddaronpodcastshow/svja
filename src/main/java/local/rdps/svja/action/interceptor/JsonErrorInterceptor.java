@@ -116,16 +116,13 @@ public class JsonErrorInterceptor implements Interceptor {
 	 * @param action
 	 * @param e
 	 */
-	private static void processException(final BaseAction action, final Exception e) {
-		final ApplicationException error = e instanceof ApplicationException ? (ApplicationException) e
-				: new ApplicationException(e.getMessage(), e);
-
+	private static void processException(final BaseAction action, final ApplicationException e) {
 		// log the exception
-		JsonErrorInterceptor.logExceptionData(error);
+		JsonErrorInterceptor.logExceptionData(e);
 
 		// setup error that displays on the front-end
 		if (action instanceof RestAction) {
-			final JsonErrorVo jsonError = JsonErrorInterceptor.createJsonErrorObject(error);
+			final JsonErrorVo jsonError = JsonErrorInterceptor.createJsonErrorObject(e);
 			((RestAction) action).setError(jsonError);
 		}
 	}
