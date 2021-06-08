@@ -1,6 +1,7 @@
 package local.rdps.svja.action;
 
 import local.rdps.svja.exception.ApplicationException;
+import local.rdps.svja.exception.NotFoundException;
 import local.rdps.svja.vo.JsonErrorVo;
 
 /**
@@ -39,31 +40,31 @@ public class UnknownAction extends RestAction {
 
 	@Override
 	public boolean mayCreate() throws ApplicationException {
-		return true;
+		throw new NotFoundException("The action does not exist");
 	}
 
 	@Override
 	public boolean mayDestroy() throws ApplicationException {
-		return true;
+		throw new NotFoundException("The action does not exist");
 	}
 
 	@Override
 	public boolean mayIndex() throws ApplicationException {
-		return true;
+		throw new NotFoundException("The action does not exist");
 	}
 
 	@Override
 	public boolean mayPatch() throws ApplicationException {
-		return true;
+		throw new NotFoundException("The action does not exist");
 	}
 
 	@Override
 	public boolean mayShow() throws ApplicationException {
-		return true;
+		throw new NotFoundException("The action does not exist");
 	}
 
 	@Override
 	public boolean mayUpdate() throws ApplicationException {
-		return true;
+		throw new NotFoundException("The action does not exist");
 	}
 }
