@@ -60,7 +60,6 @@ public abstract class RestAction extends BaseAction {
 	 * @throws IOException
 	 */
 	public String create() throws ApplicationException, IOException {
-		RestAction.logger.error(" create() - " + ServletActionContext.getRequest().getMethod());
 		throw new NotFoundException("create() not defined for action.");
 	}
 
@@ -71,7 +70,6 @@ public abstract class RestAction extends BaseAction {
 	 * @throws ApplicationException
 	 */
 	public String destroy() throws ApplicationException {
-		RestAction.logger.error(" destroy() - " + ServletActionContext.getRequest().getMethod());
 		throw new NotFoundException("destroy() not defined for action.");
 	}
 
@@ -191,7 +189,6 @@ public abstract class RestAction extends BaseAction {
 	 * @throws ApplicationException
 	 */
 	public String index() throws ApplicationException {
-		RestAction.logger.error(" index() - " + ServletActionContext.getRequest().getMethod());
 		throw new NotFoundException("index() not defined for action.");
 	}
 
@@ -210,7 +207,6 @@ public abstract class RestAction extends BaseAction {
 	 * @throws ApplicationException
 	 */
 	public String patch() throws ApplicationException {
-		RestAction.logger.error(" patch() - " + ServletActionContext.getRequest().getMethod());
 		throw new NotFoundException("patch() not defined for action.");
 	}
 
@@ -248,7 +244,6 @@ public abstract class RestAction extends BaseAction {
 	 * @throws ApplicationException
 	 */
 	public String show() throws ApplicationException {
-		RestAction.logger.error(" show() - " + ServletActionContext.getRequest().getMethod());
 		throw new NotFoundException("show() not defined for action.");
 	}
 
@@ -259,7 +254,6 @@ public abstract class RestAction extends BaseAction {
 	 * @throws ApplicationException
 	 */
 	public String update() throws ApplicationException {
-		RestAction.logger.error(" update() - " + ServletActionContext.getRequest().getMethod());
 		throw new NotFoundException("update() not defined for action.");
 	}
 }
