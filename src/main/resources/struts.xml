@@ -94,14 +94,13 @@
             </result>
             <!-- Catch Exceptions and Handle Errors -->
             <result name="exception" type="json">
-                <param name="statusCode">${exception.exceptionStatusCode}</param>
                 <param name="noCache">true</param>
                 <param name="root">error</param>
             </result>
         </global-results>
 
         <!-- Mapping for unknown action handler -->
-        <action name="unknownHandler" method="handleUnknownRequest" class="local.rdps.svja.action.BaseAction"/>
+        <action name="unknownHandler" class="local.rdps.svja.action.UnknownAction"/>
 
         <!-- Authentication Actions -->
         <action name="api/authenticate" method="authenticate" class="local.rdps.svja.action.AuthenticationAction"/>

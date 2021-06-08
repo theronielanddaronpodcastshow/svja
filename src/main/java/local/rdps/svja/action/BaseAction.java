@@ -1,29 +1,5 @@
 package local.rdps.svja.action;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionSupport;
-import local.rdps.svja.action.preresultlistener.CookieWriter;
-import local.rdps.svja.action.preresultlistener.SessionWriter;
-import local.rdps.svja.blo.SessionBloGateway;
-import local.rdps.svja.constant.AuthenticationConstants;
-import local.rdps.svja.constant.CommonConstants;
-import local.rdps.svja.constant.ErrorConstants;
-import local.rdps.svja.constant.ResultConstants;
-import local.rdps.svja.dao.jooq.tables.records.SessionsRecord;
-import local.rdps.svja.exception.ApplicationException;
-import local.rdps.svja.exception.IllegalParameterException;
-import local.rdps.svja.exception.NotFoundException;
-import local.rdps.svja.util.ValidationUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jooq.lambda.tuple.Tuple2;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,6 +8,30 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.jooq.lambda.tuple.Tuple2;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.opensymphony.xwork2.ActionContext;
+import com.opensymphony.xwork2.ActionSupport;
+
+import local.rdps.svja.action.preresultlistener.CookieWriter;
+import local.rdps.svja.action.preresultlistener.SessionWriter;
+import local.rdps.svja.blo.SessionBloGateway;
+import local.rdps.svja.constant.AuthenticationConstants;
+import local.rdps.svja.constant.CommonConstants;
+import local.rdps.svja.constant.ResultConstants;
+import local.rdps.svja.dao.jooq.tables.records.SessionsRecord;
+import local.rdps.svja.exception.ApplicationException;
+import local.rdps.svja.exception.IllegalParameterException;
+import local.rdps.svja.util.ValidationUtils;
 
 /**
  * <p>
@@ -314,33 +314,6 @@ public class BaseAction extends ActionSupport implements ActionInterface {
 	 */
 	public SessionsRecord getSessionsRecord() {
 		return this.sessionsRecord;
-	}
-
-	/**
-	 * This method handles unknown requests (e.g. unmapped action paths)
-	 *
-	 * @throws NotFoundException
-	 * @throws ApplicationException
-	 */
-	public @Nullable String handleUnknownRequest() throws NotFoundException {
-		final String ciString = "";
-		final StringBuilder fullUrl = new StringBuilder(64);
-		final StringBuffer requestURL = this.request.getRequestURL();
-		final String queryString = this.request.getQueryString();
-		if (!ValidationUtils.isEmpty(requestURL)) {
-			fullUrl.append(requestURL);
-		}
-		if (!ValidationUtils.isEmpty(queryString)) {
-			fullUrl.append("?");
-			fullUrl.append(queryString);
-		}
-
-		BaseAction.logger.warn(ErrorConstants.ERROR_UNKNOWN_REQUEST + " Client Info: {}. Request URL: {}", ciString,
-				fullUrl);
-
-		// Set the exception status code
-		this.response.setStatus(new NotFoundException().getExceptionStatusCode());
-		return ResultConstants.RESULT_EXCEPTION;
 	}
 
 	/**
