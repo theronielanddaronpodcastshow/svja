@@ -60,12 +60,12 @@ public class BaseAction extends ActionSupport implements ActionInterface {
 	 * Whether or not we should log how long the action took to execute
 	 */
 	private boolean logActionTime = BaseAction.logger.isInfoEnabled();
+	private boolean sessionDeleted;
+	private boolean sessionIdHasChanged;
 	/**
 	 * The current session
 	 */
 	private SessionsRecord sessionsRecord;
-	private boolean sessionDeleted;
-	private boolean sessionIdHasChanged;
 	protected HttpServletRequest request;
 	protected HttpServletResponse response;
 	protected Map<String, Object> session;

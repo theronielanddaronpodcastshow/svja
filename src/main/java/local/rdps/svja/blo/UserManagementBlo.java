@@ -45,7 +45,7 @@ public class UserManagementBlo {
 			throw new AuthenticationException("The user found is lacking an id: " + user);
 		if (Objects.equals(user.getPassword(), userRecord.getPassword())) {
 			userRecord.setLastLoginDate(Instant.now());
-			userRecord.setLoginCount(userRecord.getLoginCount()+1);
+			userRecord.setLoginCount(userRecord.getLoginCount() + 1);
 			CommonDaoGateway.upsertItem(userRecord);
 			return userRecord;
 		}

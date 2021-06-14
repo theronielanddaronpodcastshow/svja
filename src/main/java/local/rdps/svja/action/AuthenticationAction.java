@@ -207,8 +207,7 @@ public class AuthenticationAction extends RestAction {
 			throw new AuthenticationException("No authenticated userId found in the user session." + "\nSessionId: "
 					+ getSessionsRecord().getId() + "\nSession: " + this.session);
 
-		final Long userId = ConversionUtils.as(Long.class,
-				this.session.get(SessionConstants.AUTHENTICATED_USER_ID));
+		final Long userId = ConversionUtils.as(Long.class, this.session.get(SessionConstants.AUTHENTICATED_USER_ID));
 
 		AuthenticationAction.logger.info("Checking on user {} with a User-Agent of {}", userId,
 				this.request.getHeader("User-Agent"));
