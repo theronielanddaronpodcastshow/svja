@@ -1,10 +1,12 @@
 package local.rdps.svja.dao;
 
-import local.rdps.svja.constant.SessionConstants;
-import local.rdps.svja.exception.ApplicationException;
-import local.rdps.svja.util.CommonUtils;
-import local.rdps.svja.util.ConversionUtils;
-import local.rdps.svja.util.ValidationUtils;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Properties;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -19,15 +21,15 @@ import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 import org.jooq.impl.DefaultConfiguration;
 import org.jooq.impl.DefaultConnectionProvider;
+import org.jooq.impl.DefaultExecuteListenerProvider;
 import org.simpleflatmapper.jooq.JooqMapperFactory;
 import org.sqlite.SQLiteConfig;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
+import local.rdps.svja.constant.SessionConstants;
+import local.rdps.svja.exception.ApplicationException;
+import local.rdps.svja.util.CommonUtils;
+import local.rdps.svja.util.ConversionUtils;
+import local.rdps.svja.util.ValidationUtils;
 
 /**
  * <p>
@@ -39,7 +41,8 @@ import java.util.Properties;
  */
 public final class DatabaseManager {
 	private static final Configuration CONNECTION_CONFIGURATION = DatabaseManager.getConfiguration();
-	private static final @NotNull String DATABASE_URI = "jdbc:sqlite:" + ServletActionContext.getServletContext().getRealPath("WEB-INF/classes/db/svja.db");
+	private static final @NotNull String DATABASE_URI = "jdbc:sqlite:"
+			+ ServletActionContext.getServletContext().getRealPath("WEB-INF/classes/db/svja.db");
 	private static final Logger logger = LogManager.getLogger();
 	private static final @NotNull Properties READ_CONNECTION_PROPERTIES = DatabaseManager
 			.setupConnectionProperties(false);
@@ -60,6 +63,7 @@ public final class DatabaseManager {
 				.set(JooqMapperFactory.newInstance().ignorePropertyNotFound().useAsm(true).newRecordMapperProvider());
 		configuration.set(JooqMapperFactory.newInstance().ignorePropertyNotFound().useAsm(true)
 				.newRecordUnmapperProvider(configuration));
+		configuration.set(new DefaultExecuteListenerProvider(new DatabaseListener()));
 
 		return configuration;
 	}
