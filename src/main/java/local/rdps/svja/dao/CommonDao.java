@@ -18,6 +18,7 @@ import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.SelectQuery;
 import org.jooq.Table;
+import org.jooq.UniqueKey;
 import org.jooq.UpdatableRecord;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
@@ -220,6 +221,15 @@ class CommonDao {
 			// }
 			// }
 
+			// Ensure that the PK is present in the merge
+			final UniqueKey<R> pk = item.getTable().getPrimaryKey();
+			if (Objects.nonNull(pk)) {
+				if (ValidationUtils.not(ValidationUtils.isEmpty(pk.getFieldsArray()))) {
+					pk.getFields().stream()
+							.filter(field -> ValidationUtils.not(ValidationUtils.isEmpty(item.get(field))))
+							.forEach(field -> item.changed(field, true));
+				}
+			}
 			final int updated = item.merge();
 
 			// Check that we didn't delete too many rows
