@@ -60,14 +60,17 @@ public class SessionWriter implements PreResultListener {
 					final String sessionData = SessionUtils.createBytesFromSessionMap(this.action.getSession());
 					if (Objects.equals(this.action.getSessionsRecord().getSessionData(), sessionData)) {
 						// If zero data is being updated, just update the last accessed time
-						SessionBloGateway.createNewSessionOrUpdateLastAccessed(
-								this.action.getSessionsRecord().getId());
+						SessionBloGateway.createNewSessionOrUpdateLastAccessed(this.action.getSessionsRecord().getId());
 						if (SessionWriter.logger.isDebugEnabled()) {
 							SessionWriter.logger.debug("We updated the last access time for our session, {}",
 									this.action.getSessionsRecord().getId());
 						}
 					} else {
 						this.action.getSessionsRecord().setSessionData(sessionData);
+						if (SessionWriter.logger.isDebugEnabled()) {
+							SessionWriter.logger.debug("Saving the session {}", this.action.getSessionsRecord());
+						}
+
 						SessionBloGateway.saveSession(this.action.getSessionsRecord());
 					}
 				} catch (ApplicationException | IOException e) {
