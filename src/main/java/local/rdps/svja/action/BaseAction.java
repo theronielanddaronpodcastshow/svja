@@ -116,7 +116,7 @@ public class BaseAction extends ActionSupport implements ActionInterface {
 				BaseAction.logger.debug("The session is changing from {} to {}",
 						this.cookies.get(AuthenticationConstants.SESSION_COOKIE_NAME), this.sessionsRecord.getId());
 			}
-			this.cookies.put(AuthenticationConstants.SESSION_COOKIE_NAME, this.sessionsRecord.getId().toString());
+			this.cookies.put(AuthenticationConstants.SESSION_COOKIE_NAME, this.sessionsRecord.getId());
 			this.sessionIdHasChanged = true;
 		}
 
