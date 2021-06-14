@@ -20,7 +20,7 @@ import local.rdps.svja.util.ValidationUtils;
 
 /**
  * <p>
- * This pre-result listener writes the cookie(s) stored in the {@link BaseForm} into the response.
+ * This pre-result listener writes the cookie(s) stored in the {@link BaseAction} into the response.
  * </p>
  *
  * @author DaRon

@@ -170,7 +170,8 @@ public class PermissionsVo extends ItemVo {
 	 * you set the id, we will pick up for {@link #getUser()}.
 	 * </p>
 	 *
-	 * @return The {@link UserVo} that these permissions pertain to
+	 * @param user
+	 *            The {@link UserVo} that these permissions pertain to
 	 */
 	public void setUser(final UserVo user) {
 		if (Objects.nonNull(user)) {

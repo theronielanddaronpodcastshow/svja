@@ -159,8 +159,8 @@ public class AuthenticationAction extends RestAction {
 			isUserAuthenticated();
 			return ResultConstants.RESULT_SUCCESS;
 		} catch (final AuthenticationException e) {
-			AuthenticationAction.logger
-					.debug("User is not authenticated.  Proceeding to authentication. Exception: " + e.getMessage());
+			AuthenticationAction.logger.debug("User is not authenticated.  Proceeding to authentication. Exception: {}",
+					e.getMessage());
 
 			return authenticateViaLocalDatabase();
 		}

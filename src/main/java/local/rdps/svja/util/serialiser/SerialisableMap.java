@@ -19,7 +19,8 @@ import org.jetbrains.annotations.Nullable;
 import local.rdps.svja.util.ValidationUtils;
 
 /**
- * <p This class allows us to serialise and deserialise maps, enforcing type-safety and things of that nature.
+ * <p>
+ * This class allows us to serialise and deserialise maps, enforcing type-safety and things of that nature.
  * </p>
  *
  * @param <K>

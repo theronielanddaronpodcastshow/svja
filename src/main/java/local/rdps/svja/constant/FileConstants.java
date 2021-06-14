@@ -2,7 +2,7 @@ package local.rdps.svja.constant;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -150,7 +150,7 @@ public final class FileConstants {
 	 * @since 1.0
 	 */
 	private static Map<FileTypeCategory, List<String>> populateFileUploadTypesMap() {
-		final Map<FileTypeCategory, List<String>> fileUploadTypesMap = new HashMap<>();
+		final Map<FileTypeCategory, List<String>> fileUploadTypesMap = new EnumMap<>(FileTypeCategory.class);
 
 		fileUploadTypesMap.put(FileTypeCategory.IMAGE_FILES,
 				List.of(FileConstants.EXTENSION_BMP, FileConstants.EXTENSION_GIF, FileConstants.EXTENSION_JPEG,

@@ -37,7 +37,7 @@ public class CommonUtils {
 	 *            The input camel case string
 	 * @return The string using underscores and all lowercase
 	 */
-	public static @NotNull String convertCamelCaseToUnderscore(final String input) {
+	public static @NotNull String convertCamelCaseToUnderscore(final CharSequence input) {
 		if (ValidationUtils.isEmpty(input))
 			return CommonConstants.EMPTY_STRING;
 		return CommonUtils.UPPER_CASE_LETTERS.matcher(input).replaceAll("_$1").toLowerCase();

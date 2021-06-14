@@ -45,8 +45,7 @@ public abstract class BaseInterceptor implements Interceptor {
 	 */
 	@Override
 	public final String intercept(final @NotNull ActionInvocation actioninvocation) throws Exception {
-		final String result = svjaIntercept(actioninvocation);
-		return result;
+		return svjaIntercept(actioninvocation);
 	}
 
 	/**

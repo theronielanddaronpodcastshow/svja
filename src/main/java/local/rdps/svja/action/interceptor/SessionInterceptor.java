@@ -146,7 +146,7 @@ public class SessionInterceptor extends BaseInterceptor {
 	 * @param session
 	 */
 	private static void putClientInfoIntoSessionIfMissing(final @NotNull ActionInvocation invocation,
-			final Map<String, Object> session) {
+			final Map<? super String, Object> session) {
 		if (Objects.isNull(session))
 			return;
 

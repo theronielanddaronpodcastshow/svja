@@ -18,7 +18,9 @@ public class JsonErrorVo {
 	 * Create a new JsonError with the given parameters
 	 *
 	 * @param code
+	 *            The error code to push via JSON as part of the content
 	 * @param message
+	 *            The error message to push via JSON as part of the content
 	 */
 	public JsonErrorVo(final Integer code, final String message) {
 		this.code = code;
@@ -28,7 +30,7 @@ public class JsonErrorVo {
 	/**
 	 * Get the error code
 	 *
-	 * @return
+	 * @return The error code to push via JSON as part of the content
 	 */
 	@JsonProperty
 	public Integer getCode() {
@@ -38,7 +40,7 @@ public class JsonErrorVo {
 	/**
 	 * Get the error message
 	 *
-	 * @return
+	 * @return The error message to push via JSON as part of the content
 	 */
 	@JsonProperty
 	public String getMessage() {

@@ -243,7 +243,7 @@ public class ParameterSanitizerInterceptor extends BaseInterceptor {
 				return this.secondaryScanner.cleanString(userInput);
 
 			String cleanString = JsonSanitizer.sanitize(userInput);
-			try (Writer stringWriter = new StringWriter(cleanString.length())) {
+			try (final Writer stringWriter = new StringWriter(cleanString.length())) {
 				final JSONWriter writer = new JSONWriter(stringWriter);
 				cleanJson(new JSONParser(cleanString), writer);
 				stringWriter.flush();
@@ -325,7 +325,7 @@ public class ParameterSanitizerInterceptor extends BaseInterceptor {
 						}
 					}
 				}
-			} catch (ParserConfigurationException | SAXException | IOException e) {
+			} catch (final ParserConfigurationException | SAXException | IOException e) {
 				Scanner._logger.error("Error parsing the struts.xml file for HTML policies. {}", e.getMessage());
 			}
 			return Collections.unmodifiableMap(actionHtmlPolicies);
@@ -400,13 +400,13 @@ public class ParameterSanitizerInterceptor extends BaseInterceptor {
 		 * parameters. The newly cleaned parameters are placed back into the given {@link HttpParameters}.
 		 * </p>
 		 * <p>
-		 * <em>Please note that this is a <u>mutative</u> method.
+		 * <em>Please note that this is a <u>mutative</u> method.</em>
 		 * </p>
 		 *
 		 * @param parameters
 		 *            The {@link HttpParameters} that need to be cleaned
 		 */
-		void cleanAllParameters(@Nullable final HttpParameters parameters) {
+		void cleanAllParameters(@Nullable final Map<String, Parameter> parameters) {
 			if (Objects.nonNull(parameters)) {
 				for (final Entry<String, Parameter> parameterEntry : parameters.entrySet()) {
 					final Parameter parameter = parameterEntry.getValue();
@@ -442,7 +442,7 @@ public class ParameterSanitizerInterceptor extends BaseInterceptor {
 		 * This method cleans the request's InputStream, actually swapping it out with a freshly cleaned stream.
 		 * </p>
 		 * <p>
-		 * <em>Please note that this is a <u>mutative</u> method.
+		 * <em>Please note that this is a <u>mutative</u> method.</em>
 		 * </p>
 		 *
 		 * @param request

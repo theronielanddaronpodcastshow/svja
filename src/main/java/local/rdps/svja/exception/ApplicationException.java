@@ -1,6 +1,7 @@
 package local.rdps.svja.exception;
 
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Level;
 
@@ -134,7 +135,6 @@ public class ApplicationException extends Exception {
 	 * @return The limited stack
 	 */
 	protected String getLimitedStack(final int maxLevel) {
-		final StringBuilder sb = new StringBuilder(128);
 		final StackTraceElement[] trace = getStackTrace();
 
 		if (Objects.isNull(trace))
@@ -143,10 +143,8 @@ public class ApplicationException extends Exception {
 			return "The stack trace is empty!";
 
 		// Create the trace
-		Sequence.stream(0, Math.min(trace.length, Math.max(1, maxLevel)) - 1).mapToObj(i -> trace[i])
-				.forEach(ApplicationException::stackTraceElementToString);
-
-		return sb.toString();
+		return Sequence.stream(0, Math.min(trace.length, Math.max(1, maxLevel)) - 1).mapToObj(i -> trace[i])
+				.map(ApplicationException::stackTraceElementToString).collect(Collectors.joining());
 	}
 
 	/**

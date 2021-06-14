@@ -82,12 +82,11 @@ public class BaseAction extends ActionSupport implements ActionInterface {
 	 */
 	@Override
 	public boolean acceptableParameterName(final @NotNull String parameterName) {
-		final boolean allowedParameterName = !parameterName.contains("session")
-				&& !Objects.equals("request", parameterName) && !parameterName.contains("dojo")
-				&& !parameterName.contains("struts") && !parameterName.contains("application")
-				&& !parameterName.contains("servlet") && !parameterName.contains("parameters");
 
-		return allowedParameterName;
+		return !parameterName.contains("session") && !Objects.equals("request", parameterName)
+				&& !parameterName.contains("dojo") && !parameterName.contains("struts")
+				&& !parameterName.contains("application") && !parameterName.contains("servlet")
+				&& !parameterName.contains("parameters");
 	}
 
 	/**
@@ -186,7 +185,7 @@ public class BaseAction extends ActionSupport implements ActionInterface {
 		this.sessionDeleted = true;
 
 		this.sessionsRecord = SessionBloGateway.createNewSessionOrUpdateLastAccessed(null);
-		this.cookies.put(AuthenticationConstants.SESSION_COOKIE_NAME, this.sessionsRecord.getId().toString());
+		this.cookies.put(AuthenticationConstants.SESSION_COOKIE_NAME, this.sessionsRecord.getId());
 	}
 
 	/**

@@ -23,7 +23,7 @@ public class UnknownAction extends RestAction {
 
 	/**
 	 * <p>
-	 * This method always returns a {@link JsonError} instance that states a 404 has occurred and to check the URL.
+	 * This method always returns a {@link JsonErrorVo} instance that states a 404 has occurred and to check the URL.
 	 * </p>
 	 *
 	 * @return An error stating that a 404 Not Found exception has occurred

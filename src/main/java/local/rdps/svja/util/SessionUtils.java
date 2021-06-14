@@ -11,6 +11,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -347,7 +348,7 @@ public class SessionUtils {
 	 *            The numbers to be compacted
 	 * @return A byte array containing the compacted numbers
 	 */
-	public static @Nullable byte[] numbersToCompactBytes(final @Nullable List<Long> numbers) {
+	public static @Nullable byte[] numbersToCompactBytes(final @Nullable Collection<Long> numbers) {
 		if (ValidationUtils.isEmpty(numbers))
 			return null;
 

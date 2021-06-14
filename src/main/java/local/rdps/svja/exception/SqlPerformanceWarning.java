@@ -38,6 +38,7 @@ public class SqlPerformanceWarning extends ApplicationException {
 	}
 
 	/**
+	 * <p>
 	 * Create a new instance with the passed in message and the exception.
 	 * </p>
 	 *

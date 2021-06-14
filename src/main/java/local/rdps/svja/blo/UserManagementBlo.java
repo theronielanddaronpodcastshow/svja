@@ -30,8 +30,6 @@ public class UserManagementBlo {
 	 *
 	 * @param user
 	 *            A {@link UserVo} instance that has the username filled in
-	 * @param userSession
-	 *            The current session
 	 * @return The verified user
 	 * @throws ApplicationException
 	 */

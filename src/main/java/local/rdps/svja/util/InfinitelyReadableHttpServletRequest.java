@@ -43,7 +43,7 @@ public class InfinitelyReadableHttpServletRequest extends HttpServletRequestWrap
 
 		// Grab the data from the Reader once and store it because HttpServletRequest is not Closeable or
 		// AutoCloseable, pump the body into something that cannot leak
-		try (InputStream s = request.getInputStream()) {
+		try (final InputStream s = request.getInputStream()) {
 			if (Objects.nonNull(s)) {
 				int singleByte;
 				final List<Byte> data = new LinkedList<>();

@@ -1,7 +1,6 @@
 package local.rdps.svja.action;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -137,16 +136,15 @@ public class FilesAction extends RestAction {
 	}
 
 	/**
-	 * @return {@code true} iff {@link FileVosAction#passesBasicConditions()} returns {@code true} and the user is
-	 *         allowed to edit this item type
+	 * @return {@code true} iff {@link FilesAction#passesBasicConditions()} returns {@code true} and the user is allowed
+	 *         to edit this item type
 	 */
 	@Override
 	public boolean mayCreate() throws ApplicationException {
 		// Perform the basic checks necessary for the request
 		this.passedBasicChecks = Optional
 				.ofNullable(this.passedBasicChecks.orElse(Boolean.valueOf(super.passesBasicConditions())));
-		if (!this.passedBasicChecks.map(v -> Objects.isNull(v) ? Boolean.FALSE : v).orElse(Boolean.FALSE)
-				.booleanValue())
+		if (!this.passedBasicChecks.filter(v -> !Objects.isNull(v)).orElse(Boolean.FALSE).booleanValue())
 			return false;
 
 		// Check to see if the user has the necessary permissions to perform the request
@@ -154,40 +152,37 @@ public class FilesAction extends RestAction {
 	}
 
 	/**
-	 * @return {@code true} iff {@link FileVosAction#passesBasicConditions()} returns {@code true}
+	 * @return {@code true} iff {@link FilesAction#passesBasicConditions()} returns {@code true}
 	 */
 	@Override
 	public boolean mayIndex() throws ApplicationException {
 		this.passedBasicChecks = Optional
 				.ofNullable(this.passedBasicChecks.orElse(Boolean.valueOf(super.passesBasicConditions())));
 
-		return this.passedBasicChecks.map(v -> Objects.isNull(v) ? Boolean.FALSE : v).orElse(Boolean.FALSE)
-				.booleanValue();
+		return this.passedBasicChecks.filter(v -> !Objects.isNull(v)).orElse(Boolean.FALSE).booleanValue();
 	}
 
 	/**
-	 * @return {@code true} iff {@link FileVosAction#passesBasicConditions()} returns {@code true}
+	 * @return {@code true} iff {@link FilesAction#passesBasicConditions()} returns {@code true}
 	 */
 	@Override
 	public boolean mayShow() throws ApplicationException {
 		this.passedBasicChecks = Optional
 				.ofNullable(this.passedBasicChecks.orElse(Boolean.valueOf(super.passesBasicConditions())));
 
-		return this.passedBasicChecks.map(v -> Objects.isNull(v) ? Boolean.FALSE : v).orElse(Boolean.FALSE)
-				.booleanValue();
+		return this.passedBasicChecks.filter(v -> !Objects.isNull(v)).orElse(Boolean.FALSE).booleanValue();
 	}
 
 	/**
-	 * @return {@code true} iff {@link FileVosAction#passesBasicConditions()} returns {@code true} and the user is
-	 *         allowed to edit this item type
+	 * @return {@code true} iff {@link FilesAction#passesBasicConditions()} returns {@code true} and the user is allowed
+	 *         to edit this item type
 	 */
 	@Override
 	public boolean mayUpdate() throws ApplicationException {
 		// Perform the basic checks necessary for the request
 		this.passedBasicChecks = Optional
 				.ofNullable(this.passedBasicChecks.orElse(Boolean.valueOf(super.passesBasicConditions())));
-		if (!this.passedBasicChecks.map(v -> Objects.isNull(v) ? Boolean.FALSE : v).orElse(Boolean.FALSE)
-				.booleanValue())
+		if (!this.passedBasicChecks.filter(v -> !Objects.isNull(v)).orElse(Boolean.FALSE).booleanValue())
 			return false;
 
 		// Check to see if the user has the necessary permissions to perform the request
@@ -212,7 +207,7 @@ public class FilesAction extends RestAction {
 		}
 	}
 
-	public void setFiles(final List<FileVo> files) {
+	public void setFiles(final Collection<FileVo> files) {
 		this.files = files;
 	}
 

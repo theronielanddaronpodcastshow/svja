@@ -105,7 +105,7 @@ public class JsonErrorInterceptor implements Interceptor {
 					break;
 				default:
 					// Make anything else an error and log the stack trace
-					JsonErrorInterceptor.logger.error(message + '\n' + JsonErrorInterceptor.getFullStackTrace(e));
+					JsonErrorInterceptor.logger.error("{}\n{}", message, JsonErrorInterceptor.getFullStackTrace(e));
 			}
 		}
 	}

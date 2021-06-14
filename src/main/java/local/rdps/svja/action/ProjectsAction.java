@@ -1,7 +1,6 @@
 package local.rdps.svja.action;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -129,8 +128,7 @@ public class ProjectsAction extends RestAction {
 		// Perform the basic checks necessary for the request
 		this.passedBasicChecks = Optional
 				.ofNullable(this.passedBasicChecks.orElse(Boolean.valueOf(super.passesBasicConditions())));
-		if (!this.passedBasicChecks.map(v -> Objects.isNull(v) ? Boolean.FALSE : v).orElse(Boolean.FALSE)
-				.booleanValue())
+		if (!this.passedBasicChecks.filter(v -> !Objects.isNull(v)).orElse(Boolean.FALSE).booleanValue())
 			return false;
 
 		// Check to see if the user has the necessary permissions to perform the request
@@ -145,8 +143,7 @@ public class ProjectsAction extends RestAction {
 		this.passedBasicChecks = Optional
 				.ofNullable(this.passedBasicChecks.orElse(Boolean.valueOf(super.passesBasicConditions())));
 
-		return this.passedBasicChecks.map(v -> Objects.isNull(v) ? Boolean.FALSE : v).orElse(Boolean.FALSE)
-				.booleanValue();
+		return this.passedBasicChecks.filter(v -> !Objects.isNull(v)).orElse(Boolean.FALSE).booleanValue();
 	}
 
 	/**
@@ -157,8 +154,7 @@ public class ProjectsAction extends RestAction {
 		this.passedBasicChecks = Optional
 				.ofNullable(this.passedBasicChecks.orElse(Boolean.valueOf(super.passesBasicConditions())));
 
-		return this.passedBasicChecks.map(v -> Objects.isNull(v) ? Boolean.FALSE : v).orElse(Boolean.FALSE)
-				.booleanValue();
+		return this.passedBasicChecks.filter(v -> !Objects.isNull(v)).orElse(Boolean.FALSE).booleanValue();
 	}
 
 	/**
@@ -170,8 +166,7 @@ public class ProjectsAction extends RestAction {
 		// Perform the basic checks necessary for the request
 		this.passedBasicChecks = Optional
 				.ofNullable(this.passedBasicChecks.orElse(Boolean.valueOf(super.passesBasicConditions())));
-		if (!this.passedBasicChecks.map(v -> Objects.isNull(v) ? Boolean.FALSE : v).orElse(Boolean.FALSE)
-				.booleanValue())
+		if (!this.passedBasicChecks.filter(v -> !Objects.isNull(v)).orElse(Boolean.FALSE).booleanValue())
 			return false;
 
 		// Check to see if the user has the necessary permissions to perform the request
@@ -190,7 +185,7 @@ public class ProjectsAction extends RestAction {
 		}
 	}
 
-	public void setProjects(final List<ProjectVo> projects) {
+	public void setProjects(final Collection<ProjectVo> projects) {
 		this.projects = projects;
 	}
 

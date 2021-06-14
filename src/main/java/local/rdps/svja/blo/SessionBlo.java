@@ -8,9 +8,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jooq.UpdatableRecord;
 
 import local.rdps.svja.dao.CommonDaoGateway;
 import local.rdps.svja.dao.SessionDaoGateway;
+import local.rdps.svja.dao.jooq.tables.interfaces.ISessions;
 import local.rdps.svja.dao.jooq.tables.records.SessionsRecord;
 import local.rdps.svja.exception.ApplicationException;
 import local.rdps.svja.exception.IllegalParameterException;
@@ -82,7 +84,7 @@ class SessionBlo {
 	 *            The item from which the map is to be retrieved
 	 * @return A valid session map
 	 */
-	static @NotNull Map<String, Object> getSessionMap(final SessionsRecord sessionItem) {
+	static @NotNull Map<String, Object> getSessionMap(final ISessions sessionItem) {
 		if (ValidationUtils.isEmpty(sessionItem)) {
 			if (SessionBlo.logger.isDebugEnabled()) {
 				SessionBlo.logger.debug("The session record was empty, so we will return a new, but empty, map");
@@ -112,7 +114,7 @@ class SessionBlo {
 	 *            The session to be saved
 	 * @throws ApplicationException
 	 */
-	static void saveSession(final SessionsRecord session) throws ApplicationException {
+	static void saveSession(final UpdatableRecord<SessionsRecord> session) throws ApplicationException {
 		CommonDaoGateway.upsertItem(session);
 	}
 

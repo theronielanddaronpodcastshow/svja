@@ -73,7 +73,7 @@ public class SessionWriter implements PreResultListener {
 
 						SessionBloGateway.saveSession(this.action.getSessionsRecord());
 					}
-				} catch (ApplicationException | IOException e) {
+				} catch (final ApplicationException | IOException e) {
 					SessionWriter.logger.error(e.getMessage(), e);
 				}
 			}

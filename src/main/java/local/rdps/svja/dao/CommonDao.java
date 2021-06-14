@@ -159,7 +159,7 @@ class CommonDao {
 		// CommonDao.logger.error("Ignoring empty field name in the dirty fields list");
 		// }
 		// }
-		return Optional.ofNullable(CommonDao.upsertItem(record).map(r -> (I) r.into(item.getClass())).orElse(null));
+		return CommonDao.upsertItem(record).map(r -> (I) r.into(item.getClass()));
 	}
 
 	/**
@@ -224,7 +224,7 @@ class CommonDao {
 			// Ensure that the PK is present in the merge
 			final UniqueKey<R> pk = item.getTable().getPrimaryKey();
 			if (Objects.nonNull(pk)) {
-				if (ValidationUtils.not(ValidationUtils.isEmpty(pk.getFieldsArray()))) {
+				if (ValidationUtils.not(ValidationUtils.isEmpty((Object[]) pk.getFieldsArray()))) {
 					pk.getFields().stream()
 							.filter(field -> ValidationUtils.not(ValidationUtils.isEmpty(item.get(field))))
 							.forEach(field -> item.changed(field, true));

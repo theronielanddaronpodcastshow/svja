@@ -30,7 +30,7 @@ public interface NonceFactoryInterface {
 	 * @throws IllegalParameterException
 	 *             If there is something wrong with the parameters passed to the method
 	 */
-	public Nonce createNonce(String sessionId) throws IllegalParameterException;
+	Nonce createNonce(String sessionId) throws IllegalParameterException;
 
 	/**
 	 * <p>
@@ -49,5 +49,5 @@ public interface NonceFactoryInterface {
 	 * @throws ApplicationException
 	 *             If there is some other exception, such as multiple matching nonces were found
 	 */
-	public void verifyNonce(Nonce nonce, String sessionId) throws ApplicationException;
+	void verifyNonce(Nonce nonce, String sessionId) throws ApplicationException;
 }

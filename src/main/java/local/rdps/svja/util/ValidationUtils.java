@@ -1448,7 +1448,7 @@ public class ValidationUtils {
 	 */
 	@Contract("null -> true")
 	public static <T> boolean isEmpty(final @Nullable Optional<T> optional) {
-		return Objects.isNull(optional) || !optional.isPresent();
+		return Objects.isNull(optional) || optional.isEmpty();
 	}
 
 	/**

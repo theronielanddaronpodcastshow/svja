@@ -27,14 +27,14 @@ public class CommonPatterns {
 	public static final Pattern DOUBLE_QUOTE = Pattern.compile("\"");
 
 	/**
-	 * This Pattern matches greedily on one or more consecutive whitespaces ( <tab>\r\n)
+	 * This Pattern matches greedily on one or more consecutive whitespaces ( \t\r\n)
 	 *
 	 * @since 1.0
 	 */
 	public static final Pattern ONE_OR_MORE_SPACES = Pattern.compile("\\s+");
 
 	/**
-	 * This Pattern matches on one whitespace character ( <tab>\r\n)
+	 * This Pattern matches on one whitespace character ( \t\r\n)
 	 *
 	 * @since 1.0
 	 */

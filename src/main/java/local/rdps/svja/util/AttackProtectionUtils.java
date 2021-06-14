@@ -67,7 +67,7 @@ public final class AttackProtectionUtils {
 	 *            Whether or not to allow whitespace
 	 * @return A clean filename or empty string
 	 */
-	public static @NotNull String cleanseFileName(final @NotNull String input, final boolean allowSpaces) {
+	public static @NotNull String cleanseFileName(final @NotNull CharSequence input, final boolean allowSpaces) {
 		if (ValidationUtils.isEmpty(input))
 			return CommonConstants.EMPTY_STRING;
 

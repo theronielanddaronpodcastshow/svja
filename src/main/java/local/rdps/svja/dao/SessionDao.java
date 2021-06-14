@@ -78,7 +78,7 @@ public class SessionDao {
 	 *         session could not be created
 	 */
 	static SessionsRecord createNewSessionOrUpdateLastAccessed(final String sessionId) {
-		try (Connection writeConn = DatabaseManager.getConnection(true);) {
+		try (final Connection writeConn = DatabaseManager.getConnection(true)) {
 			final DSLContext writeContext = DatabaseManager.getBuilder(writeConn);
 			// We should be inserting a new session
 			if (ValidationUtils.isEmpty(sessionId)) {
@@ -89,9 +89,6 @@ public class SessionDao {
 					query.addValue(SessionDao.s.LAST_ACCESSED, DSL.currentLocalDateTime());
 
 					// Execute and get the results
-					if (SessionDao.logger.isDebugEnabled()) {
-						SessionDao.logger.debug(writeContext.renderInlined(query));
-					}
 					final int rowsWritten = query.execute();
 					if (SessionDao.logger.isDebugEnabled()) {
 						SessionDao.logger.debug("We wrote {} rows to the database when creating a new session",
@@ -112,9 +109,6 @@ public class SessionDao {
 				query.addConditions(SessionDao.s.ID.equal(sessionId));
 
 				// Execute and get the results
-				if (SessionDao.logger.isDebugEnabled()) {
-					SessionDao.logger.debug(writeContext.renderInlined(query));
-				}
 				final int rowsWritten = query.execute();
 				if (SessionDao.logger.isDebugEnabled()) {
 					SessionDao.logger.debug("We wrote {} rows when updating the last_accessed data",
@@ -148,16 +142,13 @@ public class SessionDao {
 	 *             If any of the parameters are illegal
 	 */
 	static void deleteSession(final String sessionId) throws ApplicationException {
-		try (Connection writeConn = DatabaseManager.getConnection(true);) {
+		try (final Connection writeConn = DatabaseManager.getConnection(true)) {
 
 			final DSLContext writeContext = DatabaseManager.getBuilder(writeConn);
 			final DeleteQuery<SessionsRecord> query = writeContext.deleteQuery(SessionDao.s);
 			query.addConditions(SessionDao.s.ID.equal(sessionId));
 
 			// Execute the query
-			if (SessionDao.logger.isDebugEnabled()) {
-				SessionDao.logger.debug(writeContext.renderInlined(query));
-			}
 			final int rowsDeleted = query.execute();
 			if (SessionDao.logger.isDebugEnabled()) {
 				SessionDao.logger.debug("We deleted {} rows when deleting the session data",
@@ -187,15 +178,12 @@ public class SessionDao {
 	 *         if a session of the provided ID could not be found
 	 */
 	static @Nullable SessionsRecord getSession(final String sessionId) {
-		try (Connection readConn = DatabaseManager.getConnection(false);) {
+		try (final Connection readConn = DatabaseManager.getConnection(false)) {
 			final DSLContext readContext = DatabaseManager.getBuilder(readConn);
 			final SelectQuery<SessionsRecord> query = readContext.selectQuery(SessionDao.s);
 			query.addConditions(SessionDao.s.ID.equal(sessionId));
 
 			// Execute the query
-			if (SessionDao.logger.isDebugEnabled()) {
-				SessionDao.logger.debug(readContext.renderInlined(query));
-			}
 			return query.fetchAny();
 		} catch (final SQLException | ApplicationException e) {
 			SessionDao.logger.error(e.getMessage(), e);

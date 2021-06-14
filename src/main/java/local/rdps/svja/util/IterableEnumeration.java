@@ -29,9 +29,9 @@ public final class IterableEnumeration<T> implements Iterable<T> {
 	 * @since 1.0
 	 */
 	private static final class EncapsulatingIterator<U> implements Iterator<U> {
-		private final Enumeration<U> encapsulatedEnumeration;
+		private final Enumeration<? extends U> encapsulatedEnumeration;
 
-		EncapsulatingIterator(final Enumeration<U> enumeration) {
+		EncapsulatingIterator(final Enumeration<? extends U> enumeration) {
 			this.encapsulatedEnumeration = enumeration;
 		}
 
