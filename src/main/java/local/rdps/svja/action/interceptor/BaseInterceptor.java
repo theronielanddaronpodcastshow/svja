@@ -47,10 +47,6 @@ public abstract class BaseInterceptor implements Interceptor {
 	 */
 	@Override
 	public final String intercept(final @NotNull ActionInvocation actioninvocation) throws Exception {
-		final ActionContext context = actioninvocation.getInvocationContext();
-		context.get(StrutsStatics.HTTP_REQUEST);
-		context.get(StrutsStatics.HTTP_RESPONSE);
-
 		final String result = svjaIntercept(actioninvocation);
 		return result;
 	}
