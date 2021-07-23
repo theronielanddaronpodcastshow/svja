@@ -104,6 +104,7 @@
 
         <!-- Authentication Actions -->
         <action name="api/authenticate" method="authenticate" class="local.rdps.svja.action.AuthenticationAction"/>
+        <action name="api/authenticate/federated" method="authenticate" class="local.rdps.svja.action.FederatedAuthenticationAction"/>
 
         <!-- General Actions -->
         <action name="api/files" class="local.rdps.svja.action.FilesAction"/>

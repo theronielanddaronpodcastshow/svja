@@ -19,6 +19,23 @@ import local.rdps.svja.vo.UserVo;
 public class UserManagementBloGateway {
 	/**
 	 * <p>
+	 * Verify the user exists.
+	 * </p>
+	 *
+	 * @param username
+	 *            The username of the user to verify
+	 * @return The verified user
+	 * @throws ApplicationException
+	 */
+	public static @NotNull UserVo verifyUserExists(final @NotNull String username) throws ApplicationException {
+		if (ValidationUtils.isEmpty(username))
+			throw new IllegalParameterException("The username is bad...");
+
+		return UserManagementBlo.verifyUserExists(username);
+	}
+
+	/**
+	 * <p>
 	 * Verify the user exists and password.
 	 * </p>
 	 *
@@ -31,7 +48,7 @@ public class UserManagementBloGateway {
 	 */
 	public static @NotNull UserVo verifyUserLogon(final @Nullable UserVo userVo) throws ApplicationException {
 		if (ValidationUtils.isEmpty(userVo))
-			throw new IllegalParameterException("The TpUser or session map is bad...");
+			throw new IllegalParameterException("The User or session map is bad...");
 		if (ValidationUtils.not(ValidationUtils.isUserName(userVo.getUsername()))
 				|| ValidationUtils.isEmpty(userVo.getPassword()))
 			throw new IllegalParameterException("To authenticate, either we need the username/password");

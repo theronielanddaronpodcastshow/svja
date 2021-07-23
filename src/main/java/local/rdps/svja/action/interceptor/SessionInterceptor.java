@@ -21,8 +21,10 @@ import com.opensymphony.xwork2.ActionInvocation;
 
 import local.rdps.svja.action.AuthenticationAction;
 import local.rdps.svja.action.BaseAction;
+import local.rdps.svja.action.FederatedAuthenticationAction;
 import local.rdps.svja.blo.SessionBloGateway;
 import local.rdps.svja.constant.AuthenticationConstants;
+import local.rdps.svja.constant.SessionConstants;
 import local.rdps.svja.dao.jooq.tables.records.SessionsRecord;
 import local.rdps.svja.exception.ApplicationException;
 import local.rdps.svja.exception.AuthenticationException;
@@ -94,15 +96,14 @@ public class SessionInterceptor extends BaseInterceptor {
 					// AttackProtectionUtils.checkForDenialOfServiceAttacks(
 					// AttackProtectionUtils.PROTECTION_TYPE_SESSION_GENERATION_ATTACKS);
 
-					if (action instanceof AuthenticationAction) {
+					if (action instanceof AuthenticationAction || action instanceof FederatedAuthenticationAction) {
 						// If we are the authentication action or the login page, it's fair to say that we don't need to
 						// throw an exception and can just hand out a new ID
 						action.changeSessionId();
 					} else
 						// Pitch a fit
 						throw new UnknownSessionException("The session (" + sessionId
-								+ ") could not be found so we're going to scream and change it to "
-								+ action.changeSessionId());
+								+ ") could not be found so we're going to scream");
 				} else if (Duration.between(sessionItem.getLastAccessed(), LocalDateTime.now(ZoneOffset.UTC)).abs()
 						.compareTo(AuthenticationConstants.SESSION_MAX_DURATION) > 0) {
 					// Our session is expired
@@ -169,9 +170,14 @@ public class SessionInterceptor extends BaseInterceptor {
 	 * @throws HijackingException
 	 * @throws ApplicationException
 	 */
-	public static void verifySession(final @NotNull Map<String, Object> session, final @NotNull String sessionId,
+	public static void verifySession(final @NotNull Map<String, Object> session, final @NotNull BaseAction action,
 			final @NotNull HttpServletRequest request) throws ApplicationException {
 		HijackingUtils.verifyClient(session, request);
+
+		if (ValidationUtils.not(action instanceof AuthenticationAction) && ValidationUtils.not(action instanceof FederatedAuthenticationAction)
+				&& ValidationUtils.not(session.containsKey(SessionConstants.AUTHENTICATED_USER_ID))) {
+			throw new AuthenticationException("The user needs to authenticate");
+		}
 	}
 
 	/**
@@ -190,9 +196,8 @@ public class SessionInterceptor extends BaseInterceptor {
 
 		final BaseAction action = ConversionUtils.as(BaseAction.class, invocation.getAction());
 		final HttpServletRequest request = (HttpServletRequest) context.get(StrutsStatics.HTTP_REQUEST);
-		final String sessionId = action.getSessionId()
-				.orElseThrow(() -> new AuthenticationException("The user needs to authenticate"));
-		SessionInterceptor.verifySession(sessionMap, sessionId, request);
+		action.getSessionId().orElseThrow(() -> new AuthenticationException("The user needs to authenticate"));
+		SessionInterceptor.verifySession(sessionMap, action, request);
 
 		// add the session into context
 		context.setSession(sessionMap);

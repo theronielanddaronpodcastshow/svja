@@ -30,7 +30,20 @@ Below are some of the _major_ vulnerabilities in the system, by action.
 	 - Authentication bypass
    - Log injection
    - Sensitive data in URL
-2. /api/files
+2. /api/authenticate/federated
+	- Cross-site request forgery (CSRF)
+	- Denial of service (DOS)
+	- Insecure deserialisation (OGNL, Struts, JSON -- no bytecode)
+		- Arbitrary object creation
+		- Arbitrary method call
+		- Session hijacking
+		- Session bypass
+		- Authentication bypass
+	- Log injection
+	- Regular expression injection
+		- Authentication bypass
+		- Denial of service
+3. /api/files
    - Cross-site request forgery (CSRF)
    - Cross-site scripting (XSS) via encoding
    - Denial of service (DOS)
@@ -49,7 +62,7 @@ Below are some of the _major_ vulnerabilities in the system, by action.
    - Race condition
 	 - Time of check, time of use (TOCTOU)
    - Sensitive data in URL
-3. /api/projects
+4. /api/projects
    - Cross-site request forgery (CSRF)
    - Cross-site scripting (XSS) via encoding
 	 Denial of service (DOS)

@@ -146,19 +146,6 @@ class CommonDao {
 
 		final DSLContext writeContext = DatabaseManager.getBuilder();
 		final UpdatableRecord<R> record = writeContext.newRecord(t, item);
-		// // Use the VO's dirty fields list to determine what changed
-		// Arrays.stream(record.fields()).forEach(field -> record.changed(field, false));
-		// for (final String field : item.getDirtyFields()) {
-		// if (!ValidationUtils.isEmpty(field)) {
-		// try {
-		// record.changed(CommonUtils.convertCamelCaseToUnderscore(field), true);
-		// } catch (final IllegalArgumentException e) {
-		// CommonDao.logger.error(e.getMessage(), e);
-		// }
-		// } else {
-		// CommonDao.logger.error("Ignoring empty field name in the dirty fields list");
-		// }
-		// }
 		return CommonDao.upsertItem(record).map(r -> (I) r.into(item.getClass()));
 	}
 
@@ -206,20 +193,6 @@ class CommonDao {
 		try (final Connection writeConn = DatabaseManager.getConnection(true)) {
 			DatabaseManager.getBuilder(writeConn);
 			DatabaseManager.setConfiguration(item, writeConn);
-			// TODO
-			// // Use the VO's dirty fields list to determine what changed
-			// Arrays.stream(record.fields()).forEach(field -> record.changed(field, false));
-			// for (final String field : item.getDirtyFields()) {
-			// if (!ValidationUtils.isEmpty(field)) {
-			// try {
-			// record.changed(CommonUtils.convertCamelCaseToUnderscore(field), true);
-			// } catch (final IllegalArgumentException e) {
-			// CommonDao.logger.error(e.getMessage(), e);
-			// }
-			// } else {
-			// CommonDao.logger.error("Ignoring empty field name in the dirty fields list");
-			// }
-			// }
 
 			// Ensure that the PK is present in the merge
 			final UniqueKey<R> pk = item.getTable().getPrimaryKey();
