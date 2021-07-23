@@ -134,6 +134,44 @@ Cache-Control: max-age=0
 }
 ```
 
+## Sample Struts "federated" authentication request ##
+```
+GET /svja/api/authenticate/federated?user.username=bill%40rdps.local&usernameTranslationRegex=%2F%40rdps%5B.%5Dlocal%2F%2F HTTP/1.1
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:88.0) Gecko/20100101 Firefox/88.0
+Host: localhost
+Accept: application/json, text/plain, */*
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Content-Length: 0
+DNT: 1
+Connection: close
+Cache-Control: max-age=0
+
+
+```
+
+## Sample JSON "federated" authentication request ##
+```
+GET /svja/api/authenticate/federated HTTP/1.1
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:88.0) Gecko/20100101 Firefox/88.0
+Host: localhost
+Accept: application/json, text/plain, */*
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Content-Type: application/json
+Content-Length: 61
+DNT: 1
+Connection: close
+Cache-Control: max-age=0
+
+{
+  "user": {
+    "username": "bill@rdps.local",
+  }
+  "usernameTranslationRegex": "/@rdps[.]local//"
+}
+```
+
 ## Sample Struts request ##
 Remember to change the svjatoken
 ```
