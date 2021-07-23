@@ -24,7 +24,7 @@ public class UsernameRegex {
 	 * A regular expression to extract a perl-style regular expression
 	 */
 	private static final Pattern PERL_STYLE_REPLACE_REGEX_EXTRACTOR = Pattern
-			.compile("^/(?<match>.*[^\\\\])/(?<replace>.*[^\\\\])/$", Pattern.CASE_INSENSITIVE);
+			.compile("^/(?<match>.*[^\\\\])/(?<replace>.*[^\\\\]?)/$", Pattern.CASE_INSENSITIVE);
 	/**
 	 * The regular expression to apply against the given text
 	 */
