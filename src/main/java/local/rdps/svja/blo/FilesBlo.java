@@ -7,7 +7,9 @@ import org.jetbrains.annotations.Nullable;
 
 import local.rdps.svja.dao.CommonDaoGateway;
 import local.rdps.svja.exception.ApplicationException;
+import local.rdps.svja.util.ExcelOut;
 import local.rdps.svja.vo.FileVo;
+import local.rdps.svja.vo.ProjectVo;
 
 /**
  * <p>
@@ -18,6 +20,35 @@ import local.rdps.svja.vo.FileVo;
  * @since 1.0
  */
 class FilesBlo {
+	/**
+	 * <p>
+	 * This method creates an excel export (XLSX) using the given data.
+	 * </p>
+	 *
+	 * @param projects
+	 *            The projects to export
+	 * @return The export
+	 */
+	static @Nullable FileVo createExcelExport(final @Nullable ProjectVo... projects) {
+		try (final ExcelOut export = new ExcelOut()) {
+			export.addWorksheet("Projects Export", 5);
+			export.writeLineToMainOutput("Project ID", "Project Title", "Last Edited By", "Last Edited By Username",
+					"Last Modified Date");
+			for (final ProjectVo project : projects) {
+				try {
+					export.writeLineToMainOutput(project.getId().toString(), project.getTitle(),
+							project.getDescription(), project.getModifiedBy().toString(),
+							project.getModifiedByUser().getUsername(), project.getModifiedDate().toString());
+				} catch (final ApplicationException e) {
+					export.writeLineToMainOutput(project.getId().toString(), project.getTitle(),
+							project.getDescription(), project.getModifiedBy().toString(), "",
+							project.getModifiedDate().toString());
+				}
+			}
+			return export.export();
+		}
+	}
+
 	/**
 	 * <p>
 	 * This method grabs the given file and file data from the file system and database. This method searches for the

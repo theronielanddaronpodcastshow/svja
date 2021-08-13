@@ -9,12 +9,14 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import local.rdps.svja.blo.FilesBloGateway;
 import local.rdps.svja.constant.ResultConstants;
 import local.rdps.svja.dao.CommonDaoGateway;
 import local.rdps.svja.dao.DatabaseManager;
 import local.rdps.svja.dao.PermissionsDaoGateway;
 import local.rdps.svja.exception.ApplicationException;
 import local.rdps.svja.util.ValidationUtils;
+import local.rdps.svja.vo.FileVo;
 import local.rdps.svja.vo.PermissionsVo;
 import local.rdps.svja.vo.ProjectVo;
 import local.rdps.svja.vo.UserVo;
@@ -30,6 +32,14 @@ import local.rdps.svja.vo.UserVo;
 public class ProjectsAction extends RestAction {
 	private static final Logger logger = LogManager.getLogger();
 	private static final long serialVersionUID = 1000000L;
+	/**
+	 * Whether or not we are to return an excel export
+	 */
+	private boolean excelExport;
+	/**
+	 * The export
+	 */
+	private FileVo export;
 	/**
 	 * Stores whether or not we have passed the basic conditions necessary for any request to this action, if set,
 	 * otherwise indicates that the basic conditions have not been checked.
@@ -75,13 +85,24 @@ public class ProjectsAction extends RestAction {
 
 	@Override
 	public String create() throws ApplicationException {
-		// this.project.setDirtyFields(super.getRequestKeysForRootNode(Project.class.getSimpleName()));
-		// final Optional<Project> newProject = CommonWriteDAOGateway.insertUpdateItem(this.project);
-		// if (newProject.isPresent()) {
-		// this.project = newProject.get();
-		// this.projectId = this.project.getProjectId();
-		// }
+		final Optional<ProjectVo> newProject = CommonDaoGateway.upsertItem(this.project);
+		if (newProject.isPresent()) {
+			this.project = newProject.get();
+			this.projectId = this.project.getId();
+		}
 		return ResultConstants.RESULT_SUCCESS;
+	}
+
+	/**
+	 * <p>
+	 * This method returns the user's export.
+	 * </p>
+	 *
+	 * @return The requested data in an XLSX format
+	 */
+	@JsonProperty
+	public FileVo getExport() {
+		return this.export;
 	}
 
 	@JsonProperty
@@ -173,6 +194,19 @@ public class ProjectsAction extends RestAction {
 		return getPermissions().getMayWrite();
 	}
 
+	/**
+	 * <p>
+	 * This method sets whether or not the user is requesting us to return the data in an Excel export.
+	 * </p>
+	 *
+	 * @param excelExport
+	 *            Whether or not to export via an XLSX file
+	 */
+	@JsonProperty
+	public void setExcelExport(final boolean excelExport) {
+		this.excelExport = excelExport;
+	}
+
 	public void setProject(final ProjectVo project) {
 		if (Objects.nonNull(project)) {
 			this.project = project;
@@ -197,22 +231,19 @@ public class ProjectsAction extends RestAction {
 		final ProjectVo proj = new ProjectVo(this.projectId);
 		ProjectsAction.logger.info("Our projectId is {} and our project ID is {}", this.projectId, proj.getId());
 		this.project = CommonDaoGateway.getItems(proj).stream().findFirst().orElse(null);
+		if (this.excelExport) {
+			this.export = FilesBloGateway.createExcelExport(this.project);
+			this.project = null;
+		}
 		return ResultConstants.RESULT_SUCCESS;
 	}
 
 	@Override
 	public String update() throws ApplicationException {
-		// this.project.setDirtyFields(super.getRequestKeysForRootNode(Project.class.getSimpleName()));
-		// if (isIdSet()) {
-		// this.project.setProjectId(this.projectId);
-		// }
-		// CommonWriteDAOGateway.insertUpdateItem(this.project);
-		// if (!ValidationUtils.isEmpty(this.project.getReferences())) {
-		// for (final ProjectReference reference : this.project.getReferences()) {
-		// reference.setProjectId(this.projectId);
-		// CommonWriteDAOGateway.insertUpdateItem(reference);
-		// }
-		// }
+		if (isIdSet()) {
+			this.project.setId(this.projectId);
+		}
+		CommonDaoGateway.upsertItem(this.project);
 		return ResultConstants.RESULT_SUCCESS;
 	}
 }

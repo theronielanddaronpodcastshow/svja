@@ -9,6 +9,7 @@ import local.rdps.svja.exception.ApplicationException;
 import local.rdps.svja.exception.IllegalParameterException;
 import local.rdps.svja.util.ValidationUtils;
 import local.rdps.svja.vo.FileVo;
+import local.rdps.svja.vo.ProjectVo;
 
 /**
  * <p>
@@ -20,6 +21,22 @@ import local.rdps.svja.vo.FileVo;
  * @since 1.0
  */
 public class FilesBloGateway {
+	/**
+	 * <p>
+	 * This method creates an excel export (XLSX) using the given data.
+	 * </p>
+	 *
+	 * @param projects
+	 *            The projects to export
+	 * @return The export
+	 */
+	public static @Nullable FileVo createExcelExport(final @Nullable ProjectVo... projects) {
+		if (Objects.isNull(projects) || (projects.length < 1))
+			return null;
+
+		return FilesBlo.createExcelExport(projects);
+	}
+
 	/**
 	 * <p>
 	 * This method grabs the given file and file data from the file system and database. This method searches for the
