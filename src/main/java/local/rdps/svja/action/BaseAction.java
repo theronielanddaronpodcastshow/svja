@@ -1,27 +1,8 @@
 package local.rdps.svja.action;
 
-import java.time.Instant;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
-import org.jooq.lambda.tuple.Tuple2;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
-
 import local.rdps.svja.action.preresultlistener.CookieWriter;
 import local.rdps.svja.action.preresultlistener.SessionWriter;
 import local.rdps.svja.blo.SessionBloGateway;
@@ -32,6 +13,22 @@ import local.rdps.svja.dao.jooq.tables.records.SessionsRecord;
 import local.rdps.svja.exception.ApplicationException;
 import local.rdps.svja.exception.IllegalParameterException;
 import local.rdps.svja.util.ValidationUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.jooq.lambda.tuple.Tuple2;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.time.Instant;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -82,7 +79,6 @@ public class BaseAction extends ActionSupport implements ActionInterface {
 	 */
 	@Override
 	public boolean acceptableParameterName(final @NotNull String parameterName) {
-
 		return !parameterName.contains("session") && !Objects.equals("request", parameterName)
 				&& !parameterName.contains("dojo") && !parameterName.contains("struts")
 				&& !parameterName.contains("application") && !parameterName.contains("servlet")
@@ -407,10 +403,13 @@ public class BaseAction extends ActionSupport implements ActionInterface {
 
 	@Override
 	public void setSession(final Map<String, Object> session) {
+		if (Objects.isNull(this.session)) {
+			this.session = new HashMap<>();
+		}
 		if (BaseAction.logger.isDebugEnabled()) {
 			session.forEach((k, v) -> BaseAction.logger.debug("Adding {} to the session map with a value of {}", k, v));
 		}
-		this.session = session;
+		this.session.putAll(session);
 	}
 
 	/**
