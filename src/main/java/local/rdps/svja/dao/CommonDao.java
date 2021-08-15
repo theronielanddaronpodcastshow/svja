@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.InsertQuery;
 import org.jooq.Record;
 import org.jooq.SelectQuery;
 import org.jooq.Table;
@@ -185,27 +186,38 @@ class CommonDao {
 			item.changed("modified_date", true);
 		}
 		if (Arrays.stream(item.fields())
-				.anyMatch(field -> field.getUnqualifiedName().equalsIgnoreCase(DSL.name("modified_date")))) {
+				.anyMatch(field -> field.getUnqualifiedName().equalsIgnoreCase(DSL.name("last_accessed")))) {
 			item.set(DSL.field("last_accessed", SQLDataType.LOCALDATETIME(0)), LocalDateTime.now());
 			item.changed("last_accessed", true);
 		}
 
 		try (final Connection writeConn = DatabaseManager.getConnection(true)) {
-			DatabaseManager.getBuilder(writeConn);
 			DatabaseManager.setConfiguration(item, writeConn);
 
 			// Ensure that the PK is present in the merge
+			boolean upsertWithPk = false;
 			final UniqueKey<R> pk = item.getTable().getPrimaryKey();
 			if (Objects.nonNull(pk)) {
 				if (ValidationUtils.not(ValidationUtils.isEmpty((Object[]) pk.getFieldsArray()))) {
-					pk.getFields().stream()
-							.filter(field -> ValidationUtils.not(ValidationUtils.isEmpty(item.get(field))))
+					upsertWithPk = pk.getFields().stream().allMatch(field -> Objects.nonNull(item.get(field)));
+					pk.getFields().stream().filter(field -> Objects.nonNull(item.get(field)))
 							.forEach(field -> item.changed(field, true));
 				}
 			}
+
+			// We don't have a PK, so we're going to insert and tell the thing to return data back to us
+			if (ValidationUtils.not(upsertWithPk)) {
+				final DSLContext writeContext = DatabaseManager.getBuilder(writeConn);
+				final InsertQuery<R> query = writeContext.insertQuery(t);
+				query.setReturning(t.fields());
+				query.addRecord((R) item);
+				query.execute();
+				return Optional.ofNullable(query.getReturnedRecord());
+			}
+
 			final int updated = item.merge();
 
-			// Check that we didn't delete too many rows
+			// Check that we didn't update too many rows
 			if (updated > 1) {
 				writeConn.setAutoCommit(false);
 				writeConn.rollback();

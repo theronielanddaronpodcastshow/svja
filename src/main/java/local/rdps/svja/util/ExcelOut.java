@@ -598,9 +598,6 @@ public class ExcelOut implements OutputMechanism {
 			final Cell cell = XLSX.smlObjectFactory.createCell();
 			String cellData = AttackProtectionUtils.cleanseForOffice(cellValue);
 			if (!ValidationUtils.isEmpty(cellData)) {
-				if (cellData.charAt(0) == '=') {
-					cellData = "'" + cellData;
-				}
 				if (cellData.length() > 32700) {
 					cellData = cellData.substring(0, 32700);
 					cellData += "... (cell content truncated due to size)";

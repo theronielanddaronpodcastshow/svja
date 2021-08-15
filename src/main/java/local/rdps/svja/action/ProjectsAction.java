@@ -240,8 +240,10 @@ public class ProjectsAction extends RestAction {
 
 	@Override
 	public String update() throws ApplicationException {
-		if (isIdSet()) {
-			this.project.setId(this.projectId);
+		if (isIdSet() && Objects.nonNull(this.project)) {
+			if (ValidationUtils.not(ValidationUtils.isId(this.project.getId()))) {
+				this.project.setId(this.projectId);
+			}
 		}
 		CommonDaoGateway.upsertItem(this.project);
 		return ResultConstants.RESULT_SUCCESS;

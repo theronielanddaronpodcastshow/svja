@@ -32,8 +32,8 @@ class FilesBlo {
 	static @Nullable FileVo createExcelExport(final @Nullable ProjectVo... projects) {
 		try (final ExcelOut export = new ExcelOut()) {
 			export.addWorksheet("Projects Export", 5);
-			export.writeLineToMainOutput("Project ID", "Project Title", "Last Edited By", "Last Edited By Username",
-					"Last Modified Date");
+			export.writeLineToMainOutput("Project ID", "Project Title", "Project Description", "Last Edited By",
+					"Last Edited By Username", "Last Modified Date");
 			for (final ProjectVo project : projects) {
 				try {
 					export.writeLineToMainOutput(project.getId().toString(), project.getTitle(),
