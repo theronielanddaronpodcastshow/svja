@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import local.rdps.svja.construct.ItemVo;
 import local.rdps.svja.dao.CommonDaoGateway;
 import local.rdps.svja.exception.ApplicationException;
 import local.rdps.svja.util.output.CsvOut;
@@ -28,16 +29,50 @@ class FilesBlo {
 
 	/**
 	 * <p>
-	 * This method creates a CSV export using the given data.
+	 * This method creates a CSV export using the given data and a basic CSV creation mechanism, rather than using a
+	 * bean-based mechanism.
 	 * </p>
 	 *
 	 * @param projects
 	 *            The projects to export
 	 * @return The export
+	 * @see #createBeanBasedCsvExport(ItemVo...)
 	 */
-	static @Nullable FileVo createCsvExport(final @Nullable ProjectVo... projects) {
+	static @Nullable FileVo createBasicProjectCsvExport(final @Nullable ProjectVo... projects) {
 		try (final CsvOut<ProjectVo> export = new CsvOut<>()) {
-			export.writeLineToMainOutput(projects);
+			export.writeLineToMainOutput("Project ID", "Project Title", "Project Description", "Last Edited By",
+					"Last Edited By Username", "Last Modified Date");
+			for (final ProjectVo project : projects) {
+				try {
+					export.writeLineToMainOutput(project.getId().toString(), project.getTitle(),
+							project.getDescription(), project.getModifiedBy().toString(),
+							project.getModifiedByUser().getUsername(), project.getModifiedDate().toString());
+				} catch (final ApplicationException e) {
+					export.writeLineToMainOutput(project.getId().toString(), project.getTitle(),
+							project.getDescription(), project.getModifiedBy().toString(), "",
+							project.getModifiedDate().toString());
+				}
+			}
+			return export.export();
+		} catch (final IOException e) {
+			FilesBlo.logger.error(e.getMessage(), e);
+			return null;
+		}
+	}
+
+	/**
+	 * <p>
+	 * This method creates a CSV export using the given data and a bean-based CSV creation mechanism.
+	 * </p>
+	 *
+	 * @param items
+	 *            The items to export
+	 * @return The export
+	 * @see #createBasicProjectCsvExport(ProjectVo...)
+	 */
+	static <Vo extends ItemVo> @Nullable FileVo createBeanBasedCsvExport(final @Nullable Vo... items) {
+		try (final CsvOut<Vo> export = new CsvOut<>()) {
+			export.writeLineToMainOutput(items);
 			return export.export();
 		} catch (final IOException e) {
 			FilesBlo.logger.error(e.getMessage(), e);

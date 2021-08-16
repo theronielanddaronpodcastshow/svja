@@ -5,6 +5,7 @@ import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import local.rdps.svja.construct.ItemVo;
 import local.rdps.svja.exception.ApplicationException;
 import local.rdps.svja.exception.IllegalParameterException;
 import local.rdps.svja.util.ValidationUtils;
@@ -23,18 +24,37 @@ import local.rdps.svja.vo.ProjectVo;
 public class FilesBloGateway {
 	/**
 	 * <p>
-	 * This method creates a CSV export using the given data.
+	 * This method creates a CSV export using the given data and a basic CSV creation mechanism, rather than using a
+	 * bean-based mechanism.
 	 * </p>
 	 *
 	 * @param projects
 	 *            The projects to export
 	 * @return The export
+	 * @see #createBeanBasedCsvExport(ItemVo...)
 	 */
-	public static @Nullable FileVo createCsvExport(final @Nullable ProjectVo... projects) {
+	public static @Nullable FileVo createBasicProjectCsvExport(final @Nullable ProjectVo... projects) {
 		if (Objects.isNull(projects) || (projects.length < 1))
 			return null;
 
-		return FilesBlo.createCsvExport(projects);
+		return FilesBlo.createBasicProjectCsvExport(projects);
+	}
+
+	/**
+	 * <p>
+	 * This method creates a CSV export using the given data and a bean-based CSV creation mechanism.
+	 * </p>
+	 *
+	 * @param items
+	 *            The items to export
+	 * @return The export
+	 * @see #createBasicProjectCsvExport(ProjectVo...)
+	 */
+	public static <Vo extends ItemVo> @Nullable FileVo createBeanBasedCsvExport(final @Nullable Vo... items) {
+		if (Objects.isNull(items) || (items.length < 1))
+			return null;
+
+		return FilesBlo.createBeanBasedCsvExport(items);
 	}
 
 	/**

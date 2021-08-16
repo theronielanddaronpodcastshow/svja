@@ -4,9 +4,6 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import local.rdps.svja.blo.FilesBloGateway;
@@ -30,10 +27,13 @@ import local.rdps.svja.vo.UserVo;
  * @since 1.0
  */
 public class ProjectsAction extends RestAction {
-	private static final Logger logger = LogManager.getLogger();
 	private static final long serialVersionUID = 1000000L;
 	/**
-	 * Whether or not we are to return a CSV export
+	 * Whether or not we are to return a basic CSV export
+	 */
+	private boolean basicCsvExport;
+	/**
+	 * Whether or not we are to return a CSV export using a bean-based methodology
 	 */
 	private boolean csvExport;
 	/**
@@ -135,12 +135,19 @@ public class ProjectsAction extends RestAction {
 
 	@Override
 	public String index() throws ApplicationException {
-		if (this.csvExport || this.excelExport) {
+		if (this.basicCsvExport || this.csvExport || this.excelExport) {
 			if (Objects.isNull(this.projects)) {
 				this.projects = CommonDaoGateway.getItems(new ProjectVo());
 			}
-			this.export = this.csvExport ? FilesBloGateway.createCsvExport(this.projects.toArray(new ProjectVo[0]))
-					: FilesBloGateway.createExcelExport(this.projects.toArray(new ProjectVo[0]));
+
+			// Export
+			if (this.basicCsvExport) {
+				this.export = FilesBloGateway.createBasicProjectCsvExport(this.projects.toArray(new ProjectVo[0]));
+			} else if (this.csvExport) {
+				this.export = FilesBloGateway.createBeanBasedCsvExport(this.projects.toArray(new ProjectVo[0]));
+			} else if (this.excelExport) {
+				this.export = FilesBloGateway.createExcelExport(this.projects.toArray(new ProjectVo[0]));
+			}
 			this.projects = null;
 		} else {
 			this.projects = CommonDaoGateway.getItems(new ProjectVo());
@@ -210,7 +217,22 @@ public class ProjectsAction extends RestAction {
 
 	/**
 	 * <p>
-	 * This method sets whether or not the user is requesting us to return the data in a CSV export.
+	 * This method sets whether or not the user is requesting us to return the data in a CSV export using the basic CSV
+	 * writing methodology.
+	 * </p>
+	 *
+	 * @param basicCsvExport
+	 *            Whether or not to export via a CSV file
+	 */
+	@JsonProperty
+	public void setBasicCsvExport(final boolean basicCsvExport) {
+		this.basicCsvExport = basicCsvExport;
+	}
+
+	/**
+	 * <p>
+	 * This method sets whether or not the user is requesting us to return the data in a CSV export using the bean-based
+	 * CSV writing methodology.
 	 * </p>
 	 *
 	 * @param csvExport
@@ -254,8 +276,13 @@ public class ProjectsAction extends RestAction {
 	public String show() throws ApplicationException {
 		final ProjectVo proj = new ProjectVo(this.projectId);
 		this.project = CommonDaoGateway.getItems(proj).stream().findFirst().orElse(null);
-		if (this.csvExport) {
-			this.export = FilesBloGateway.createCsvExport(this.project);
+
+		// Export
+		if (this.basicCsvExport) {
+			this.export = FilesBloGateway.createBasicProjectCsvExport(this.project);
+			this.project = null;
+		} else if (this.csvExport) {
+			this.export = FilesBloGateway.createBeanBasedCsvExport(this.project);
 			this.project = null;
 		} else if (this.excelExport) {
 			this.export = FilesBloGateway.createExcelExport(this.project);
