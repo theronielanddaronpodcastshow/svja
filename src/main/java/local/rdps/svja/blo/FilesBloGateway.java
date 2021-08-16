@@ -23,6 +23,22 @@ import local.rdps.svja.vo.ProjectVo;
 public class FilesBloGateway {
 	/**
 	 * <p>
+	 * This method creates a CSV export using the given data.
+	 * </p>
+	 *
+	 * @param projects
+	 *            The projects to export
+	 * @return The export
+	 */
+	public static @Nullable FileVo createCsvExport(final @Nullable ProjectVo... projects) {
+		if (Objects.isNull(projects) || (projects.length < 1))
+			return null;
+
+		return FilesBlo.createCsvExport(projects);
+	}
+
+	/**
+	 * <p>
 	 * This method creates an excel export (XLSX) using the given data.
 	 * </p>
 	 *
@@ -47,6 +63,7 @@ public class FilesBloGateway {
 	 * @param file
 	 *            A {@link FileVo} with either the file id or file name set
 	 * @return A filled in {@link FileVo}
+	 * @throws ApplicationException
 	 * @throws IllegalParameterException
 	 *             If the file name is invalid
 	 */
@@ -68,6 +85,7 @@ public class FilesBloGateway {
 	 * @param fileId
 	 *            The ID of the file to retrieve from the database
 	 * @return A filled in {@link FileVo}
+	 * @throws ApplicationException
 	 * @throws IllegalParameterException
 	 *             If the ID is invalid
 	 */
@@ -87,6 +105,7 @@ public class FilesBloGateway {
 	 * @param fileName
 	 *            The name of the file
 	 * @return A filled in {@link FileVo}
+	 * @throws ApplicationException
 	 * @throws IllegalParameterException
 	 *             If the file name is invalid
 	 */

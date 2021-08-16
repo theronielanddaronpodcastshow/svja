@@ -1,4 +1,4 @@
-package local.rdps.svja.util;
+package local.rdps.svja.util.output;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,6 +64,8 @@ import org.xlsx4j.sml.SheetData;
 
 import local.rdps.svja.constant.CommonConstants;
 import local.rdps.svja.construct.OutputMechanism;
+import local.rdps.svja.util.ConversionUtils;
+import local.rdps.svja.util.ValidationUtils;
 import local.rdps.svja.vo.FileVo;
 
 /**
@@ -577,10 +579,9 @@ public class ExcelOut implements OutputMechanism {
 			final Row row = getRow(worksheetNumber, rowNumber);
 
 			final Cell cell = XLSX.smlObjectFactory.createCell();
-			String cellData = ValidationUtils.isEmpty(cellValue) ? CommonConstants.EMPTY_STRING : cellValue;
+			CharSequence cellData = ValidationUtils.isEmpty(cellValue) ? CommonConstants.EMPTY_STRING : cellValue;
 			if (cellData.length() > 32700) {
-				cellData = cellData.substring(0, 32700);
-				cellData += "... (cell content truncated due to size)";
+				cellData = cellData.subSequence(0, 32700);
 			}
 
 			if (ValidationUtils.isNumber(cellData)) {
@@ -588,7 +589,7 @@ public class ExcelOut implements OutputMechanism {
 			} else {
 				cell.setT(STCellType.STR);
 			}
-			cell.setV(cellData);
+			cell.setV(cellData.toString());
 
 			// If we are using a template, use the same styles
 			cell.setS(Long.valueOf(styleId));
@@ -876,7 +877,7 @@ public class ExcelOut implements OutputMechanism {
 		final FileAttribute<Set<PosixFilePermission>> permissions = PosixFilePermissions
 				.asFileAttribute(EnumSet.of(PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE));
 		try {
-			this.finalPath = Files.createTempFile("fileout-", "-main.xlsx", permissions);
+			this.finalPath = Files.createTempFile("export-", "-main.xlsx", permissions);
 			this.reportFile = this.finalPath.toFile();
 			this.reportFile.deleteOnExit();
 		} catch (final IOException e) {
@@ -974,7 +975,7 @@ public class ExcelOut implements OutputMechanism {
 	 * Prepares the Excel file for export.
 	 * </p>
 	 *
-	 * @return FileVo of the file.
+	 * @return FileVo pointing to the file to be exported
 	 */
 	public @Nullable FileVo export() {
 		try {

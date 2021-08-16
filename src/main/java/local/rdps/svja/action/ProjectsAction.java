@@ -33,6 +33,10 @@ public class ProjectsAction extends RestAction {
 	private static final Logger logger = LogManager.getLogger();
 	private static final long serialVersionUID = 1000000L;
 	/**
+	 * Whether or not we are to return a CSV export
+	 */
+	private boolean csvExport;
+	/**
 	 * Whether or not we are to return an excel export
 	 */
 	private boolean excelExport;
@@ -131,11 +135,12 @@ public class ProjectsAction extends RestAction {
 
 	@Override
 	public String index() throws ApplicationException {
-		if (this.excelExport) {
+		if (this.csvExport || this.excelExport) {
 			if (Objects.isNull(this.projects)) {
 				this.projects = CommonDaoGateway.getItems(new ProjectVo());
 			}
-			this.export = FilesBloGateway.createExcelExport(this.projects.toArray(new ProjectVo[0]));
+			this.export = this.csvExport ? FilesBloGateway.createCsvExport(this.projects.toArray(new ProjectVo[0]))
+					: FilesBloGateway.createExcelExport(this.projects.toArray(new ProjectVo[0]));
 			this.projects = null;
 		} else {
 			this.projects = CommonDaoGateway.getItems(new ProjectVo());
@@ -205,6 +210,19 @@ public class ProjectsAction extends RestAction {
 
 	/**
 	 * <p>
+	 * This method sets whether or not the user is requesting us to return the data in a CSV export.
+	 * </p>
+	 *
+	 * @param csvExport
+	 *            Whether or not to export via a CSV file
+	 */
+	@JsonProperty
+	public void setCsvExport(final boolean csvExport) {
+		this.csvExport = csvExport;
+	}
+
+	/**
+	 * <p>
 	 * This method sets whether or not the user is requesting us to return the data in an Excel export.
 	 * </p>
 	 *
@@ -234,12 +252,12 @@ public class ProjectsAction extends RestAction {
 
 	@Override
 	public String show() throws ApplicationException {
-		if (Objects.nonNull(this.projects)) {
-			ProjectsAction.logger.error("Our Projects was of size {}", this.projects.size());
-		}
 		final ProjectVo proj = new ProjectVo(this.projectId);
 		this.project = CommonDaoGateway.getItems(proj).stream().findFirst().orElse(null);
-		if (this.excelExport) {
+		if (this.csvExport) {
+			this.export = FilesBloGateway.createCsvExport(this.project);
+			this.project = null;
+		} else if (this.excelExport) {
 			this.export = FilesBloGateway.createExcelExport(this.project);
 			this.project = null;
 		}

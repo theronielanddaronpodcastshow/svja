@@ -63,6 +63,9 @@ Below are some of the _major_ vulnerabilities in the system, by action.
      - Time of check, time of use (TOCTOU)
    - Sensitive data in URL
 4. /api/projects
+   - Comma Seperated Values (CSV) injection
+     - Arbitrary CSV injection
+     - Client-side attacks
    - Cross-site request forgery (CSRF)
    - Cross-site scripting (XSS) via encoding
      Denial of service (DOS)
@@ -81,6 +84,7 @@ Below are some of the _major_ vulnerabilities in the system, by action.
    - Sensitive data in URL
    - XLSX injection
      - Arbitrary XML injection
+     - Client-side attacks
 
 ## Default installed users ##
 ```

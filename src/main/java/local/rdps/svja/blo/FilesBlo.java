@@ -1,13 +1,17 @@
 package local.rdps.svja.blo;
 
+import java.io.IOException;
 import java.util.Collection;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import local.rdps.svja.dao.CommonDaoGateway;
 import local.rdps.svja.exception.ApplicationException;
-import local.rdps.svja.util.ExcelOut;
+import local.rdps.svja.util.output.CsvOut;
+import local.rdps.svja.util.output.ExcelOut;
 import local.rdps.svja.vo.FileVo;
 import local.rdps.svja.vo.ProjectVo;
 
@@ -20,6 +24,27 @@ import local.rdps.svja.vo.ProjectVo;
  * @since 1.0
  */
 class FilesBlo {
+	private static final Logger logger = LogManager.getLogger();
+
+	/**
+	 * <p>
+	 * This method creates a CSV export using the given data.
+	 * </p>
+	 *
+	 * @param projects
+	 *            The projects to export
+	 * @return The export
+	 */
+	static @Nullable FileVo createCsvExport(final @Nullable ProjectVo... projects) {
+		try (final CsvOut<ProjectVo> export = new CsvOut<>()) {
+			export.writeLineToMainOutput(projects);
+			return export.export();
+		} catch (final IOException e) {
+			FilesBlo.logger.error(e.getMessage(), e);
+			return null;
+		}
+	}
+
 	/**
 	 * <p>
 	 * This method creates an excel export (XLSX) using the given data.
