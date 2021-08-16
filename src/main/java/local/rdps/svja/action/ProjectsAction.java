@@ -131,7 +131,16 @@ public class ProjectsAction extends RestAction {
 
 	@Override
 	public String index() throws ApplicationException {
-		this.projects = CommonDaoGateway.getItems(new ProjectVo());
+		if (this.excelExport) {
+			if (Objects.isNull(this.projects)) {
+				this.projects = CommonDaoGateway.getItems(new ProjectVo());
+			}
+			this.export = FilesBloGateway.createExcelExport(this.projects.toArray(new ProjectVo[0]));
+			this.projects = null;
+		} else {
+			this.projects = CommonDaoGateway.getItems(new ProjectVo());
+		}
+
 		return ResultConstants.RESULT_SUCCESS;
 	}
 
@@ -229,7 +238,6 @@ public class ProjectsAction extends RestAction {
 			ProjectsAction.logger.error("Our Projects was of size {}", this.projects.size());
 		}
 		final ProjectVo proj = new ProjectVo(this.projectId);
-		ProjectsAction.logger.info("Our projectId is {} and our project ID is {}", this.projectId, proj.getId());
 		this.project = CommonDaoGateway.getItems(proj).stream().findFirst().orElse(null);
 		if (this.excelExport) {
 			this.export = FilesBloGateway.createExcelExport(this.project);
