@@ -62,6 +62,7 @@ import org.xlsx4j.sml.STPatternType;
 import org.xlsx4j.sml.STVerticalAlignment;
 import org.xlsx4j.sml.SheetData;
 
+import local.rdps.svja.constant.CommonConstants;
 import local.rdps.svja.construct.OutputMechanism;
 import local.rdps.svja.vo.FileVo;
 
@@ -165,26 +166,6 @@ public class ExcelOut implements OutputMechanism {
 		 */
 		private static @NotNull String getCellId(final long columnNumber, final long rowNumber) {
 			return XLSX.calcColRef(columnNumber) + rowNumber;
-		}
-
-		/**
-		 * <p>
-		 * Sets the value of the given Cell to the given value.
-		 * </p>
-		 *
-		 * @param cell
-		 *            The Cell of which to set the value
-		 * @param cellValue
-		 *            The new value of the given Cell
-		 */
-		private static void setCellValue(final @NotNull Cell cell, final @NotNull String cellValue) {
-			if (ValidationUtils.isNumber(cellValue)) {
-				cell.setT(STCellType.N);
-			} else {
-				cell.setT(STCellType.STR);
-			}
-
-			cell.setV(cellValue);
 		}
 
 		/**
@@ -596,23 +577,24 @@ public class ExcelOut implements OutputMechanism {
 			final Row row = getRow(worksheetNumber, rowNumber);
 
 			final Cell cell = XLSX.smlObjectFactory.createCell();
-			String cellData = AttackProtectionUtils.cleanseForOffice(cellValue);
-			if (!ValidationUtils.isEmpty(cellData)) {
-				if (cellData.length() > 32700) {
-					cellData = cellData.substring(0, 32700);
-					cellData += "... (cell content truncated due to size)";
-				}
+			String cellData = ValidationUtils.isEmpty(cellValue) ? CommonConstants.EMPTY_STRING : cellValue;
+			if (cellData.length() > 32700) {
+				cellData = cellData.substring(0, 32700);
+				cellData += "... (cell content truncated due to size)";
 			}
 
-			XLSX.setCellValue(cell, cellData);
+			if (ValidationUtils.isNumber(cellData)) {
+				cell.setT(STCellType.N);
+			} else {
+				cell.setT(STCellType.STR);
+			}
+			cell.setV(cellData);
 
 			// If we are using a template, use the same styles
 			cell.setS(Long.valueOf(styleId));
 
 			final int currentNumCells = row.getC().size();
 			cell.setR(XLSX.getCellId((currentNumCells + 1), rowNumber));
-
-			cell.setT(STCellType.STR);
 
 			row.getC().add(cell);
 		}
@@ -894,7 +876,7 @@ public class ExcelOut implements OutputMechanism {
 		final FileAttribute<Set<PosixFilePermission>> permissions = PosixFilePermissions
 				.asFileAttribute(EnumSet.of(PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE));
 		try {
-			this.finalPath = Files.createTempFile("fileout-", "-main.xls", permissions);
+			this.finalPath = Files.createTempFile("fileout-", "-main.xlsx", permissions);
 			this.reportFile = this.finalPath.toFile();
 			this.reportFile.deleteOnExit();
 		} catch (final IOException e) {
