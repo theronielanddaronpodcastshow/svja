@@ -172,8 +172,8 @@ Cache-Control: max-age=0
 
 {
   "user": {
-    "username": "bill@rdps.local",
-  }
+    "username": "bill@rdps.local"
+  },
   "usernameTranslationRegex": "/@rdps[.]local//"
 }
 ```
