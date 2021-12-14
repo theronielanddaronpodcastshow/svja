@@ -189,7 +189,7 @@ Accept-Language: en-GB,en;q=0.5
 Accept-Encoding: gzip, deflate
 DNT: 1
 Connection: close
-Cookie: svjatoken=RaMu5vhFBgL8goV6Ja1ffLnpmcixNuAL7fUP; Path=/; HttpOnly
+Cookie: svjatoken=RaMu5vhFBgL8goV6Ja1ffLnpmcixNuAL7fUP;
 Cache-Control: max-age=0
 
 
@@ -208,7 +208,7 @@ Content-Type: application/json
 Content-Length: 19
 DNT: 1
 Connection: close
-Cookie: svjatoken=RaMu5vhFBgL8goV6Ja1ffLnpmcixNuAL7fUP; Path=/; HttpOnly
+Cookie: svjatoken=RaMu5vhFBgL8goV6Ja1ffLnpmcixNuAL7fUP;
 Cache-Control: max-age=0
 
 {
