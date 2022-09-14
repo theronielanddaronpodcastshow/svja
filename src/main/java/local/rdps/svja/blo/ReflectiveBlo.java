@@ -3,7 +3,6 @@ package local.rdps.svja.blo;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import local.rdps.svja.constant.CommonConstants;
+import local.rdps.svja.util.ValidationUtils;
 import local.rdps.svja.vo.ReflectionVo;
 
 /**
@@ -62,15 +62,30 @@ class ReflectiveBlo {
 				ReflectiveBlo.logger.info("{} loaded; invoking method...", method.getName());
 			}
 
-			// Invoke the method
-			return Modifier.isStatic(method.getModifiers())
-					? method.invoke(null, action.getParameters().values().toArray())
-					: method.invoke(clazz.getConstructor().newInstance(), action.getParameters().values().toArray());
+			// If the method is static, we don't need to call the constructor
+			if (Modifier.isStatic(method.getModifiers()))
+				return method.invoke(null, action.getParameters().values().toArray());
+
+			// If we were given a constructor, call it
+			if (ValidationUtils.not(action.getConstructorParameters().isEmpty())) {
+				final Class<?>[] parameterClasses = new Class<?>[action.getConstructorParameters().size()];
+				int i = 0;
+				for (final Object obj : action.getConstructorParameters().values()) {
+					parameterClasses[i++] = obj.getClass();
+				}
+
+				// Instantiate the object and then invoke the method
+				final Object newObj = clazz.getConstructor(parameterClasses)
+						.newInstance(action.getConstructorParameters().values().toArray());
+				return method.invoke(newObj, action.getParameters().values().toArray());
+			}
+
+			// Instantiate the object with the default constructor and then invoke the method
+			return method.invoke(clazz.getConstructor().newInstance(), action.getParameters().values().toArray());
 		} catch (@NotNull final InstantiationException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | NoSuchMethodException | SecurityException | ClassNotFoundException e) {
 			ReflectiveBlo.logger.error("Could not find the class " + action.getClassName() + " with a method "
-					+ action.getMethodName() + "("
-					+ (action.getParameters().isEmpty() ? CommonConstants.EMPTY_STRING
+					+ action.getMethodName() + "(" + (action.getParameters().isEmpty() ? CommonConstants.EMPTY_STRING
 							: String.join(",", action.getParameters().keySet()))
 					+ ")... " + e.getMessage(), e);
 		}

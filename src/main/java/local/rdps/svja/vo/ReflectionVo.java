@@ -2,10 +2,7 @@ package local.rdps.svja.vo;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,6 +24,10 @@ public class ReflectionVo {
 	 * The class name that we are to pull via reflection
 	 */
 	private @Nullable String className;
+	/**
+	 * The parameters to pass to the constructor during object instantiation
+	 */
+	private @Nullable Map<String, Object> constructorParameters;
 	/**
 	 * The method that we are to reflectively invoke
 	 */
@@ -52,6 +53,21 @@ public class ReflectionVo {
 			return CommonConstants.EMPTY_STRING;
 
 		return this.className;
+	}
+
+	/**
+	 * <p>
+	 * This method gets the parameters that we pass to the constructor during the object instantiation/initialisation
+	 * process.
+	 * </p>
+	 *
+	 * @return A map of parameter type and parameter value key-value pairing
+	 */
+	public @NotNull Map<String, Object> getConstructorParameters() {
+		if (ValidationUtils.isEmpty(this.constructorParameters))
+			return Collections.emptyMap();
+
+		return this.constructorParameters;
 	}
 
 	/**
@@ -117,8 +133,20 @@ public class ReflectionVo {
 	 */
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	public void setClassName(final @Nullable String className) {
-		LogManager.getLogger().info("Setting the class to {}", className);
 		this.className = className;
+	}
+
+	/**
+	 * <p>
+	 * This method sets the parameters that we pass to the constructor during the object initialisation process.
+	 * </p>
+	 *
+	 * @param constructorParameters
+	 *            A map of parameter type and parameter value key-value pairing
+	 */
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+	public void setConstructorParameters(final @Nullable Map<String, Object> constructorParameters) {
+		this.constructorParameters = constructorParameters;
 	}
 
 	/**
@@ -131,7 +159,6 @@ public class ReflectionVo {
 	 */
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	public void setMethodName(final @Nullable String methodName) {
-		LogManager.getLogger().info("Setting the method to {}", methodName);
 		this.methodName = methodName;
 	}
 
@@ -145,7 +172,6 @@ public class ReflectionVo {
 	 */
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	public void setNamespace(final @Nullable String namespace) {
-		LogManager.getLogger().info("Setting the method to {}", namespace);
 		this.namespace = namespace;
 	}
 
@@ -159,12 +185,6 @@ public class ReflectionVo {
 	 */
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	public void setParameters(final @Nullable Map<String, Object> parameters) {
-		LogManager.getLogger()
-				.debug("Setting the parameters to {}",
-						Objects.nonNull(parameters)
-								? parameters.entrySet().stream().map(entry -> entry.getKey() + ":" + entry.getValue())
-										.collect(Collectors.joining(","))
-								: null);
 		this.parameters = parameters;
 	}
 }
