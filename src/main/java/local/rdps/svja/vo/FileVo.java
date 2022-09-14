@@ -91,12 +91,12 @@ public class FileVo extends ItemVo {
 		}
 
 		// Set file name
-		if (Objects.isNull(FileVo.file)) {
-			newVo.setFile(FileVo.file);
-		} else if (Objects.isNull(FileVo.file)) {
-			newVo.setFile(FileVo.file);
-		} else if (Objects.equals(FileVo.file, FileVo.file)) {
-			newVo.setFile(FileVo.file);
+		if (Objects.isNull(left.file)) {
+			newVo.setFile(right.file);
+		} else if (Objects.isNull(right.file)) {
+			newVo.setFile(left.file);
+		} else if (Objects.equals(left.file, right.file)) {
+			newVo.setFile(left.file);
 		}
 
 		return newVo;
@@ -154,7 +154,7 @@ public class FileVo extends ItemVo {
 	 */
 	@JsonProperty
 	public @Nullable String getFile() {
-		return FileVo.file;
+		return file;
 	}
 
 	/**
@@ -198,9 +198,11 @@ public class FileVo extends ItemVo {
 	 *
 	 * @param contents
 	 *            The data to push to the file in question
+	 * @return The current {@link FileVo} instance
 	 */
-	public void setContents(@Nullable final byte[] contents) {
+	public FileVo setContents(@Nullable final byte[] contents) {
 		this.contents = contents;
+		return this;
 	}
 
 	/**
@@ -210,8 +212,10 @@ public class FileVo extends ItemVo {
 	 *
 	 * @param file
 	 *            The file we want to point to
+	 * @return The current {@link FileVo} instance
 	 */
-	public void setFile(@NotNull final String file) {
-		FileVo.file = file;
+	public FileVo setFile(@NotNull final String file) {
+		this.file = file;
+		return this;
 	}
 }
