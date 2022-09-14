@@ -85,6 +85,21 @@ Below are some of the _major_ vulnerabilities in the system, by action.
    - XLSX injection
      - Arbitrary XML injection
      - Client-side attacks
+5. /api/reflect
+    - Usage reflection
+    - Insecure deserialisation (OGNL, Struts, JSON -- no bytecode)
+        - Path traversal (read-only)
+        - Arbitrary object creation
+        - Arbitrary method call
+        - Session hijacking
+        - Session bypass
+        - Authentication bypass
+        - Insecure direct object reference
+    - Insecure serialisation
+        - Personally identifiable information (PII) bleed
+        - Sensitive information bleed
+    - Log injection
+
 
 ## Default installed users ##
 ```
