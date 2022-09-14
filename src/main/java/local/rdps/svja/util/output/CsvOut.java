@@ -168,7 +168,7 @@ public class CsvOut<Vo extends ItemVo> implements OutputMechanism {
 			for (final Vo item : items) {
 				try {
 					this.csvBuilder.write(item);
-				} catch (CsvDataTypeMismatchException | CsvRequiredFieldEmptyException e) {
+				} catch (final CsvDataTypeMismatchException | CsvRequiredFieldEmptyException e) {
 					CsvOut.logger.error(e.getMessage(), e);
 				}
 			}
