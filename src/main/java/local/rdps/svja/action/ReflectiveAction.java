@@ -20,9 +20,12 @@ import local.rdps.svja.vo.ReflectionVo;
 public class ReflectiveAction extends RestAction {
 	private static final long serialVersionUID = 1000010L;
 	/**
-	 *
+	 * The {@link ReflectionVo} telling us what to call to reflectively
 	 */
 	private @Nullable ReflectionVo action;
+	/**
+	 * The data coming back from the reflective call, if anything
+	 */
 	private @Nullable Object results;
 
 	/**
