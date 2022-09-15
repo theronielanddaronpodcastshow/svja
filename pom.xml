@@ -386,4 +386,17 @@
             </plugins>
         </pluginManagement>
     </build>
+
+    <distributionManagement>
+        <repository>
+            <id>githubreleases</id>
+            <url>https://github.com/theronielanddaronpodcastshow/svja</url>
+        </repository>
+        <snapshotRepository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>githubsnapshots</id>
+            <url>https://github.com/theronielanddaronpodcastshow/svja</url>
+            <layout>default</layout>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
