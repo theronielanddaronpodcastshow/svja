@@ -28,11 +28,10 @@ public class RestInterceptor implements Interceptor {
 	 * Determine the REST method to call depending on whether the ID for the given action has been set and what HTTP
 	 * method was used.
 	 *
-	 * @param action
-	 * @return
+	 * @return The restful method to use when executing the action
 	 * @throws NotFoundException
 	 */
-	private static RestAction.REQUEST_METHOD determineRestMethod(final RestAction action, final boolean isIdSet)
+	private static RestAction.REQUEST_METHOD determineRestMethod(final boolean isIdSet)
 			throws NotFoundException {
 		switch (ServletActionContext.getRequest().getMethod()) {
 			case RestAction.GET:
@@ -79,9 +78,7 @@ public class RestInterceptor implements Interceptor {
 	public String intercept(final ActionInvocation invocation) throws Exception {
 		if (invocation.getAction() instanceof RestAction) {
 			final RestAction action = (RestAction) invocation.getAction();
-			// make sure to reset the request method first, in case it has been edited somehow
-			action.setRequestMethod(null);
-			action.setRequestMethod(RestInterceptor.determineRestMethod(action, action.isIdSet()));
+			action.setRequestMethod(RestInterceptor.determineRestMethod(action.isIdSet()));
 		}
 		return invocation.invoke();
 	}
