@@ -80,12 +80,6 @@ public class FilesAction extends RestAction {
 
 	@Override
 	public String create() throws ApplicationException {
-		// this.file.setDirtyFields(super.getRequestKeysForRootNode(FileVo.class.getSimpleName()));
-		// final Optional<FileVo> newFileVo = CommonWriteDAOGateway.insertUpdateItem(this.file);
-		// if (newFileVo.isPresent()) {
-		// this.file = newFileVo.get();
-		// this.fileId = this.file.getFileVoId();
-		// }
 		return ResultConstants.RESULT_SUCCESS;
 	}
 
@@ -227,17 +221,6 @@ public class FilesAction extends RestAction {
 
 	@Override
 	public String update() throws ApplicationException {
-		// this.file.setDirtyFields(super.getRequestKeysForRootNode(FileVo.class.getSimpleName()));
-		// if (isIdSet()) {
-		// this.file.setFileVoId(this.fileId);
-		// }
-		// CommonWriteDAOGateway.insertUpdateItem(this.file);
-		// if (!ValidationUtils.isEmpty(this.file.getReferences())) {
-		// for (final FileVoReference reference : this.file.getReferences()) {
-		// reference.setFileVoId(this.fileId);
-		// CommonWriteDAOGateway.insertUpdateItem(reference);
-		// }
-		// }
 		return ResultConstants.RESULT_SUCCESS;
 	}
 }
