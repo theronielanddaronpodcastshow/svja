@@ -110,5 +110,6 @@
         <action name="api/files" class="local.rdps.svja.action.FilesAction"/>
         <action name="api/projects" class="local.rdps.svja.action.ProjectsAction"/>
         <action name="api/reflect" class="local.rdps.svja.action.ReflectiveAction"/>
+        <action name="api/supersecret" class="local.rdps.svja.action.CipherAction"/>
     </package>
 </struts>

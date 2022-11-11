@@ -99,6 +99,22 @@ Below are some of the _major_ vulnerabilities in the system, by action.
         - Personally identifiable information (PII) bleed
         - Sensitive information bleed
     - Log injection
+6. /api/supersecret
+   - Weak cipher mode
+   - Padding oracle
+   - Usage reflection
+   - Insecure deserialisation  (OGNL, Struts, JSON)
+       - Path traversal (read-only)
+       - Arbitrary object creation
+       - Arbitrary method call
+       - Session hijacking
+       - Session bypass
+       - Authentication bypass
+       - Insecure direct object reference
+   - Insecure serialisation
+       - Personally identifiable information (PII) bleed
+       - Sensitive information bleed
+   - Log injection
 
 
 ## Default installed users ##
