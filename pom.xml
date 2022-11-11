@@ -5,7 +5,7 @@
 
     <groupId>local.rdps</groupId>
     <artifactId>SuperVulnerableJavaApplication</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.2</version>
     <packaging>war</packaging>
     <name>SuperVulnerableJavaApplication</name>
     <url>https://www.youtube.com/channel/UCbj1JFcSJeTuf3qf9GPRemA/playlists</url>
@@ -55,6 +55,11 @@
             <groupId>org.apache.struts</groupId>
             <artifactId>struts2-json-plugin</artifactId>
             <version>2.5.26</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk15on</artifactId>
+            <version>1.70</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -288,10 +293,6 @@
                         </webApp>
                         <stopKey>CTRL+C</stopKey>
                         <stopPort>8999</stopPort>
-                        <scanIntervalSeconds>10</scanIntervalSeconds>
-                        <scanTargets>
-                            <scanTarget>src/main/webapp/WEB-INF/web.xml</scanTarget>
-                        </scanTargets>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -345,7 +346,8 @@
                             </goals>
                         </execution>
                     </executions>
-                    <configuration xmlns="http://www.jooq.org/xsd/jooq-codegen-3.14.0.xsd">
+                    <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                   xsi:schemaLocation="http://www.jooq.org/xsd/jooq-codegen-3.14.0.xsd ">
                         <logging>DEBUG</logging>
                         <jdbc>
                             <driver>org.sqlite.JDBC</driver>
@@ -355,7 +357,7 @@
                             <database>
                                 <name>org.jooq.meta.sqlite.SQLiteDatabase</name>
                                 <includes>.*</includes>
-                                <excludes />
+                                <excludes/>
                             </database>
                             <target>
                                 <directory>src/main/java/</directory>
