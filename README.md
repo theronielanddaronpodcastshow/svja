@@ -8,13 +8,15 @@ Please remember that this application is intended to be highly vulnerable to a n
 Apache Maven 3.6 or above
 npm 7.11 or above
 Java 11 or above
-Tomcat 9.0
+Tomcat 9.0 or above
 
 ## Installation ##
 The RDPS SVJA is composed of a Java struts 2 application running react. It is built by simply running:
 mvn clean package
 
 This creates a WAR in target -- svja.war. Simply place the WAR in your tomcat webapps folder. In a default Tomcat build go to http://127.0.0.1:8080/svja to access the application.
+
+If you are running Tomcat 10 or above, please add ```<Loader jakartaConverter="TOMCAT" />``` to your Tomcat context.xml config file.
 
 ## Current vulnerabilities ##
 Below are some of the _major_ vulnerabilities in the system, by action.
