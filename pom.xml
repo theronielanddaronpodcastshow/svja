@@ -5,7 +5,7 @@
 
     <groupId>local.rdps</groupId>
     <artifactId>SuperVulnerableJavaApplication</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.2.1</version>
     <packaging>war</packaging>
     <name>SuperVulnerableJavaApplication</name>
     <url>https://www.youtube.com/channel/UCbj1JFcSJeTuf3qf9GPRemA/playlists</url>
