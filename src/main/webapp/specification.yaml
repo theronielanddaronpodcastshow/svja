@@ -1,0 +1,645 @@
+openapi: 3.0.3
+info:
+  title: Super Vulnerable Java Application
+  description: |-
+    The RDPS Super Vulnerable Java Application is just that -- a super vulnerable java application created for the benefit of all to see a variety of common, often "complex", vulnerabilities. This software was created as part of the Roniel and DaRon Podcast Show (https://www.youtube.com/channel/UCbj1JFcSJeTuf3qf9GPRemA) so that we could discuss and show a number of vulnerabilities that we came across frequently in a more realistic way than what you will see with the many other tools online. To see example exploitation, please watch our podcast.
+    
+    Some useful links:
+    - [The Roniel and DaRon Podcast Show](https://www.youtube.com/watch?v=1ZabuMm6PAc&list=PL3NfKlrEGgEalHaFmAfYDAe6CFjzEOeZ4)
+    - [The Java 11 API](https://docs.oracle.com/en/java/javase/11/docs/api/) (Please remember that for some of the attacks, you may have _more_ options and you should use the Java API for whatever _your server_ is running)
+  contact:
+    email: theronielanddaronpodcastshow@gmail.com
+  license:
+    name: MIT
+    url: https://github.com/theronielanddaronpodcastshow/svja/blob/main/LICENSE
+  version: 1.0.2.1
+
+externalDocs:
+  description: GitHub repository
+  url: https://github.com/theronielanddaronpodcastshow/svja
+
+servers:
+  - url: http://127.0.0.1:8080/svja/
+
+tags:
+  - name: Authentication
+    description: Hypothetically you need to authenticate to use the system, right?
+  - name: Project Management
+    description: Everything that you need to manage projects and any data tied thereto
+  - name: Super Happy Fun Time
+    description: Some extra fun functionality designed to keep you on your toes
+
+paths:
+  /api/authenticate:
+    post:
+      tags:
+        - Authentication
+      summary: Authenticate to the server
+      description: Authenticates to the server using the provided credentials.
+      requestBody:
+        description: Takes the provided credentials and authenticates the user to the server.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                user:
+                  $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Successful operation
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: JSESSIONID=iQKfhetF9bWUYhNDrZOTUZYHwDGtnbjZIU2B; Path=/; HttpOnly
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseReturn'
+      security: []
+  /api/authenticate/federated:
+    post:
+      tags:
+        - Authentication
+        - Super Happy Fun Time
+      summary: Authenticate to the server
+      description: Authenticates to the server using the username and translation ruleset.
+      requestBody:
+        description: Accepts the IdP username and a regular expression to translate the username into a username known to the information system.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                usernameTranslationRegex:
+                  type: string
+                  format: regex
+                  description: A perl-style regular expression that will translate the username from the IdP into a username known by the SP
+                  example: /@example\.com//
+                  writeOnly: true
+                user:
+                  type: object
+                  properties:
+                    username:
+                      description: The user's username according to the IdP
+                      example: admin@example.com
+                      type: string
+                      minLength: 1
+                      writeOnly: true
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                usernameTranslationRegex:
+                  type: string
+                  format: regex
+                  description: A perl-style regular expression that will translate the username from the IdP into a username known by the SP
+                  example: /@example\.com//
+                  writeOnly: true
+                user:
+                  type: object
+                  properties:
+                    username:
+                      description: The user's username according to the IdP
+                      example: admin@example.com
+                      type: string
+                      minLength: 1
+                      writeOnly: true
+      responses:
+        '200':
+          description: Successful operation
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: JSESSIONID=iQKfhetF9bWUYhNDrZOTUZYHwDGtnbjZIU2B; Path=/; HttpOnly
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseReturn'
+      security: []
+  /api/files:
+    get:
+      tags:
+        - Project Management
+      summary: Retrieves one or more files
+      description: Retrieves one or more files if the user has the necessary permissions
+      parameters:
+        - in: query
+          name: fileId
+          schema:
+            type: integer
+            format: int64
+          description: The ID of the file to retrieve if only one is wanted and the ID is known (pick either this or fileName -- if neither is provided, all accessible files are returned)
+          example: 1
+        - in: query
+          name: fileName
+          schema:
+            type: string
+          description: The name of the file to retrieve if only one is wanted and the name is known (pick either this or fileId -- if neither is provided, all accessible files are returned)
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    oneOf:
+                      - $ref: '#/components/schemas/File'
+                      - $ref: '#/components/schemas/Files'
+                  - $ref: '#/components/schemas/BaseReturn'
+  /api/projects:
+    get:
+      tags:
+        - Project Management
+      summary: Retrieves one or more projects
+      description: Retrieves one or more projects if the user has the necessary permissions
+      parameters:
+        - in: query
+          name: projectId
+          schema:
+            type: integer
+            format: int64
+          description: The ID of the project to retrieve if only one is wanted and the ID is known (if none is provided, all accessible projects are returned)
+          example: 1
+        - in: query
+          name: basicCsvExport
+          schema:
+            type: boolean
+          description: If we want the data returned in a CSV, set this to true (note that at most one export methodology can be chosen at a time)
+          example: false
+          allowEmptyValue: false
+        - in: query
+          name: csvExport
+          schema:
+            type: boolean
+          description: If we want the data returned in a bean-backed CSV, set this to true (note that at most one export methodology can be chosen at a time)
+          example: false
+          allowEmptyValue: false
+        - in: query
+          name: excelExport
+          schema:
+            type: boolean
+          description: If we want the data returned in an Excel XLSX, set this to true (note that at most one export methodology can be chosen at a time)
+          example: false
+          allowEmptyValue: false
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    oneOf:
+                        - $ref: '#/components/schemas/Project'
+                        - $ref: '#/components/schemas/Projects'
+                        - $ref: '#/components/schemas/ProjectExport'
+                  - $ref: '#/components/schemas/BaseReturn'
+  /api/reflect:
+    get:
+      tags:
+        - Super Happy Fun Time
+      summary: Provides reflective access to backend methods
+      description: Allows for a more flexible front-end by allowing reflective calls to specific back-end methods.
+      parameters:
+        - in: query
+          name: action.className
+          schema:
+            type: string
+          description: The name of the action class to call reflectively
+          example: ProjectVo
+          required: true
+        - in: query
+          name: action.constructorParameters
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+          description: This is a map of all parameters (if any) to feed to the constructor (note that the value can be of any type)
+          style: form
+          explode: true
+          example:
+            action.constructorParameters.projectId: 1
+        - in: query
+          name: action.methodName
+          schema:
+            type: string
+          description: The encrypted action name that we want to call
+          example: A2AD3700354960FB880A0444BFCE0AFE
+          required: true
+        - in: query
+          name: action.namespace
+          schema:
+            type: string
+          description: The namespace of the action we are calling reflectively
+          example: local.rdps.svja.vo
+          required: true
+        - in: query
+          name: action.parameters.key
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+          description: This is a map of all parameters (if any) to feed to the method that we are calling (note that the value can be of any type)
+          style: form
+          explode: true
+          example:
+            action.parameters.projectId: 1
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Reflection'
+                  - $ref: '#/components/schemas/BaseReturn'
+  /api/supersecret:
+    get:
+      tags:
+        - Super Happy Fun Time
+      summary: Provides "end-to-end" encryption, taking an encrypted request and returning an encrypted response
+      description: Takes in an encrypted action, all serialised data in an encrypted map, and the restful action to perform (also encrypted) and then performs the requested action.  The results of the activity is then encrypted and returned to the caller.
+      parameters:
+        - in: query
+          name: action.actionName
+          schema:
+            type: string
+          description: The encrypted action name that we want to call
+          example: A2AD3700354960FB880A0444BFCE0AFE
+          required: true
+        - in: query
+          name: action.restfulMethod
+          schema:
+            type: string
+            enum:
+              - BF9543E848D72C75CCDCFFA91FCAB023
+              - D8275C94803E163CDED104D1739E779C
+              - 13A711B89321653328BB6AAB2965A038
+              - B06183F54FF5BBEF936A7F0D944697F1
+              - 18BEA4D63679EDD31054363675F19D1E
+          description: >
+            A RESTful method determining if we are performing a mutative or non-mutative action:
+            * `BF9543E848D72C75CCDCFFA91FCAB023` - When the encrypted action is performed, it is done under the 'delete' context, seeking to delete the item from the information system
+            * `D8275C94803E163CDED104D1739E779C` - When the encrypted action is performed, it is done under the non-mutative 'data retrieval' context, seeking to retrieve the desired data from the information system
+            * `13A711B89321653328BB6AAB2965A038` - When the encrypted action is performed, it is done under the mutative 'update the existing data' context, seeking to update an existing record stored in the information system; patches only update data that is specified in the request
+            * `B06183F54FF5BBEF936A7F0D944697F1` - When the encrypted action is performed, it is done under the mutative 'create or update the existing data' context, updating an existing record if an ID is set, otherwise trying to create a new record; if performing an update, all data is updated such that any data not specified in the request is assumed to be 'null' or some default value
+            * `18BEA4D63679EDD31054363675F19D1E` - When the encrypted action is performed, it is done under the mutative 'update the existing data' context, updating an existing record based on the given ID and updating any data in the record but not set in the request either as 'null' or as some default value
+          example: D8275C94803E163CDED104D1739E779C
+          required: true
+        - in: query
+          name: action.parameters.key
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+          description: An encrypted map of parameter type and parameter value key-value pairing representing all parameters and their associated values
+          style: form
+          explode: true
+          example:
+            action.parameters.30F0C03B774AD2938330911BD1CBF3A8: F7126DF4DAA8C16D2DF5ABF3DCA29BD4
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SecretSquirrel'
+                  - $ref: '#/components/schemas/BaseReturn'
+    post:
+      tags:
+        - Super Happy Fun Time
+      summary: Provides "end-to-end" encryption, taking an encrypted request and returning an encrypted response
+      description: Takes in an encrypted action, all serialised data in an encrypted map, and the restful action to perform (also encrypted) and then performs the requested action.  The results of the activity is then encrypted and returned to the caller.
+      requestBody:
+        description: Takes in an encrypted action, all serialised data in an encrypted map, and the restful action to perform (also encrypted) and then performs the requested action.  The results of the activity is then encrypted and returned to the caller.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  $ref: '#/components/schemas/SecretSquirrel'
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                action:
+                  $ref: '#/components/schemas/SecretSquirrel'
+        required: false
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SecretSquirrel'
+                  - $ref: '#/components/schemas/BaseReturn'
+
+components:
+  schemas:
+    # Request/Response properties
+    # Request-only properties
+    # Response-only properties
+    BaseReturn:
+      type: object
+      description: The permissions that the user has on the current object / within the context of the current action
+      properties:
+        # Request/Response properties
+        # Request-only properties
+        # Response-only properties
+        mayCreate:
+          type: boolean
+          description: Whether or not the user can create a new instance of the current object / within the context of the current action
+          default: false
+          nullable: false
+          readOnly: true
+        mayDestroy:
+          type: boolean
+          description: Whether or not the user can delete the current object / within the context of the current action
+          default: false
+          nullable: false
+          readOnly: true
+        mayIndex:
+          type: boolean
+          description: Whether or not the user can list all accessible records within the current action
+          default: false
+          nullable: false
+          readOnly: true
+        mayPatch:
+          type: boolean
+          description: Whether or not the user can patch the current object / within the context of the current action
+          default: false
+          nullable: false
+          readOnly: true
+        mayShow:
+          type: boolean
+          description: Whether or not the user can view a specific record within the current action
+          default: false
+          nullable: false
+          readOnly: true
+        mayUpdate:
+          type: boolean
+          description: Whether or not the user can perform update activities against the current object / within the context of the current action
+          default: false
+          nullable: false
+          readOnly: true
+    AFile:
+      type: object
+      properties:
+        # Request/Response properties
+        # Request-only properties
+        # Response-only properties
+        contents:
+          type: string
+          format: base64
+          description: The file, if it exists, in base64
+          default: null
+          nullable: true
+          readOnly: true
+        file:
+          type: string
+          description: The name of the file
+          readOnly: true
+        fileSize:
+          type: integer
+          format: int64
+          description: The size of the file in bytes
+          readOnly: true
+        fullPath:
+          type: string
+          description: The full path of the file (for debugging purposes)
+          readOnly: true
+    AProject:
+      type: object
+      properties:
+        # Request/Response properties
+        description:
+          type: string
+          description: The project's description
+          example: A really cool project!
+        id:
+          type: integer
+          format: int64
+          description: The project's identifier
+          example: 1
+          minimum: 1
+        title:
+          type: string
+          description: The project's title
+          example: Next-Generation Fighter
+        # Request-only properties
+        # Response-only properties
+        file:
+          type: object
+          items:
+            $ref: '#/components/schemas/AFile'
+          readOnly: true
+        modifiedBy:
+          type: integer
+          format: int64
+          description: The identifier for the last user to modify the record
+          example: 1
+          readOnly: true
+        modifiedByUser:
+          type: object
+          items:
+            $ref: '#/components/schemas/User'
+          readOnly: true
+        modifiedDate:
+          type: string
+          format: date-time
+          description: When the record was last modified
+          example: 1970-01-01T00:00:00Z
+          readOnly: true
+    File:
+      type: object
+      properties:
+      # Request/Response properties
+      # Request-only properties
+      # Response-only properties
+        file:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/AFile'
+          readOnly: true
+    Files:
+      type: object
+      properties:
+      # Request/Response properties
+      # Request-only properties
+      # Response-only properties
+        files:
+          type: array
+          items:
+            $ref: '#/components/schemas/AFile'
+          readOnly: true
+    Project:
+      type: object
+      properties:
+      # Request/Response properties
+      # Request-only properties
+      # Response-only properties
+        project:
+          type: object
+          items:
+            $ref: '#/components/schemas/AProject'
+          readOnly: true
+    Projects:
+      type: object
+      properties:
+        # Request/Response properties
+        # Request-only properties
+        # Response-only properties
+        projects:
+          type: array
+          items:
+            $ref: '#/components/schemas/AProject'
+          readOnly: true
+    ProjectExport:
+      type: object
+      properties:
+      # Request/Response properties
+      # Request-only properties
+      # Response-only properties
+        export:
+          type: object
+          items:
+            $ref: '#/components/schemas/AFile'
+          readOnly: true
+    Reflection:
+      type: object
+      properties:
+        # Request/Response properties
+        # Request-only properties
+        className:
+          type: string
+          description: The name of the action class to call reflectively
+          example: ProjectVo
+          writeOnly: true
+        constructorParameters:
+          type: object
+          description: This is a map of all parameters (if any) to feed to the constructor (note that the value can be of any type)
+          example:
+            projectId: 1
+          additionalProperties:
+            type: string
+          writeOnly: true
+        methodName:
+          type: string
+          description: The method to call reflectively
+          example: index
+          writeOnly: true
+        namespace:
+          type: string
+          description: The namespace of the action we are calling reflectively
+          example: local.rdps.svja.vo
+          writeOnly: true
+        parameters:
+          type: object
+          description: This is a map of all parameters (if any) to feed to the method that we are calling (note that the value can be of any type)
+          example:
+            projectId: 1
+          additionalProperties:
+            type: string
+          writeOnly: true
+        # Response-only properties
+        results:
+          type: string
+          description: The results of the reflective call
+          example: 1B0A7601D5287DA7A3420ED7012A7CD285398E5266471929EC94A1DA16A989915545973D4A7D3AE64A4C8004DD227B197CD4A0CA48FAA510D8241267F3979FDBC4ABA3B3363E8C0218C15FA2A508DBBF3ABABFAB9EC477A5026EEE374C0E1A6A2673785E9A4623825A24138C93EF575C912F593AF1FCC21697F921C7F7FFD0DB8A021721FA7D0AA567D5EDD60BDC45EB9C323A5CEA6D4C082852800D954501D31B100F27B84CE94187F1AAE91A92278B3D70F8BF77C8D108C77357F77C0D788F27F2BCF7CB1236E93C1664A974AA79D8603F6426C0BCE5A0F8E75F3303FFA6BD7A6A0AA773F60E85AB46CCCA875DD008A27665F9F7B6D7428EE858AC870806CAB8E70C289328E1B82B270A1E7D5C9D26F23F23FCCC2F8905A1F644B7B32BC2C3802DA78B5A3DA9764C41E4A10D0FA0D3B9430CE9B23C07EF5F799C86DDB273D4556FB1104A66EE7710E17A575A936A87B82C8C2EC944E00966BB37EA9E50128BC930A47C2C3664CBF9950F278D8549176EF7220F2DB6DDDAA87D38B3DEF247EC
+          readOnly: true
+    SecretSquirrel:
+      type: object
+      description: This contains all of the data for working encrypted requests
+      properties:
+        # Request/Response properties
+        # Request-only properties
+        actionName:
+          type: string
+          description: The encrypted action name that we want to call
+          example: A2AD3700354960FB880A0444BFCE0AFE
+          writeOnly: true
+        parameters:
+          type: object
+          description: An encrypted map of parameter type and parameter value key-value pairing representing all parameters and their associated values
+          example:
+            30F0C03B774AD2938330911BD1CBF3A8: F7126DF4DAA8C16D2DF5ABF3DCA29BD4
+          additionalProperties:
+            type: string
+          writeOnly: true
+        restfulMethod:
+          type: string
+          description: >
+            A RESTful method determining if we are performing a mutative or non-mutative action:
+            * `BF9543E848D72C75CCDCFFA91FCAB023` - When the encrypted action is performed, it is done under the 'delete' context, seeking to delete the item from the information system
+            * `D8275C94803E163CDED104D1739E779C` - When the encrypted action is performed, it is done under the non-mutative 'data retrieval' context, seeking to retrieve the desired data from the information system
+            * `13A711B89321653328BB6AAB2965A038` - When the encrypted action is performed, it is done under the mutative 'update the existing data' context, seeking to update an existing record stored in the information system; patches only update data that is specified in the request
+            * `B06183F54FF5BBEF936A7F0D944697F1` - When the encrypted action is performed, it is done under the mutative 'create or update the existing data' context, updating an existing record if an ID is set, otherwise trying to create a new record; if performing an update, all data is updated such that any data not specified in the request is assumed to be 'null' or some default value
+            * `18BEA4D63679EDD31054363675F19D1E` - When the encrypted action is performed, it is done under the mutative 'update the existing data' context, updating an existing record based on the given ID and updating any data in the record but not set in the request either as 'null' or as some default value
+          example: D8275C94803E163CDED104D1739E779C
+          enum:
+            - BF9543E848D72C75CCDCFFA91FCAB023
+            - D8275C94803E163CDED104D1739E779C
+            - 13A711B89321653328BB6AAB2965A038
+            - B06183F54FF5BBEF936A7F0D944697F1
+            - 18BEA4D63679EDD31054363675F19D1E
+          writeOnly: true
+        # Response-only properties
+        results:
+          type: string
+          description: An encrypted string containing the results of the given action
+          example: 1B0A7601D5287DA7A3420ED7012A7CD285398E5266471929EC94A1DA16A989915545973D4A7D3AE64A4C8004DD227B197CD4A0CA48FAA510D8241267F3979FDBC4ABA3B3363E8C0218C15FA2A508DBBF3ABABFAB9EC477A5026EEE374C0E1A6A2673785E9A4623825A24138C93EF575C912F593AF1FCC21697F921C7F7FFD0DB8A021721FA7D0AA567D5EDD60BDC45EB9C323A5CEA6D4C082852800D954501D31B100F27B84CE94187F1AAE91A92278B3D70F8BF77C8D108C77357F77C0D788F27F2BCF7CB1236E93C1664A974AA79D8603F6426C0BCE5A0F8E75F3303FFA6BD7A6A0AA773F60E85AB46CCCA875DD008A27665F9F7B6D7428EE858AC870806CAB8E70C289328E1B82B270A1E7D5C9D26F23F23FCCC2F8905A1F644B7B32BC2C3802DA78B5A3DA9764C41E4A10D0FA0D3B9430CE9B23C07EF5F799C86DDB273D4556FB1104A66EE7710E17A575A936A87B82C8C2EC944E00966BB37EA9E50128BC930A47C2C3664CBF9950F278D8549176EF7220F2DB6DDDAA87D38B3DEF247EC
+          readOnly: true
+    User:
+      type: object
+      description: This represents a user of the information system
+      properties:
+        # Request/Response properties
+        username:
+          type: string
+          description: The user's username
+          example: admin
+          minLength: 1
+        # Request-only properties
+        password:
+          type: string
+          format: password
+          description: The user's password
+          example: my_p@a$$w0rd1sTerrible!
+          minLength: 1
+          writeOnly: true
+        # Response-only properties
+        lastLoginDate:
+          type: string
+          format: date-time
+          description: When the user last authenticated to the system
+          example: 1970-01-01T00:00:00Z
+          readOnly: true
+        loginCount:
+          type: integer
+          format: int64
+          description: The number of times that the user has authenticated
+          example: 12
+          minimum: 0
+          readOnly: true
+  securitySchemes:
+    svjaAuth:
+      type: apiKey
+      in: cookie
+      name: svjatoken
+
+security:
+  # By default we require you be authenticated
+  - svjaAuth: [ ]
