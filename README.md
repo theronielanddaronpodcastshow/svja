@@ -18,6 +18,9 @@ This creates a WAR in target -- svja.war. Simply place the WAR in your tomcat we
 
 If you are running Tomcat 10 or above, please add ```<Loader jakartaConverter="TOMCAT" />``` to your Tomcat context.xml config file.
 
+## Swagger UI ##
+For those who want to use it to get the ball rolling, the root (http://127.0.0.1:8080/svja) now features Swagger UI and a basic OpenAPI specification (http://127.0.0.1:8080/svja/specification.yaml) that you can use.  Note that the specification, and thus Swagger UI, only scratches the surface (that's what insecure deserialisation, etc., is all about, right?).
+
 ## Current vulnerabilities ##
 Below are some of the _major_ vulnerabilities in the system, by action.
 
