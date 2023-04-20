@@ -110,7 +110,7 @@ public class ProjectVo extends ItemVo {
 	 * @param file
 	 *            The file we want to point to
 	 */
-	public void setFile(final @NotNull FileVo file) {
+	public void setFile(final @Nullable FileVo file) {
 		this.file = file;
 	}
 

@@ -214,7 +214,7 @@ public class FileVo extends ItemVo {
 	 *            The file we want to point to
 	 * @return The current {@link FileVo} instance
 	 */
-	public FileVo setFile(@NotNull final String file) {
+	public FileVo setFile(@Nullable final String file) {
 		this.file = file;
 		return this;
 	}
