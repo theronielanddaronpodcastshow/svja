@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.Security;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -95,8 +96,9 @@ public class NetworkTrafficEncrypter {
 	 */
 	public static String decrypt(final String hexString) throws IllegalBlockSizeException, BadPaddingException,
 			NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException {
+		Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 		final SecretKeySpec keySpec = new SecretKeySpec(NetworkTrafficEncrypter.getEncryptionKey(), "AES");
-		final Cipher cipher = Cipher.getInstance("AES/ECB/PKCS7Padding", "BC");
+		final Cipher cipher = Cipher.getInstance("AES/ECB/PKCS7Padding");
 		cipher.init(2, keySpec);
 		final byte[] decrypted = cipher.doFinal(NetworkTrafficEncrypter.hexToByte(hexString));
 		return new String(decrypted);
@@ -119,8 +121,9 @@ public class NetworkTrafficEncrypter {
 	 */
 	public static String encrypt(final byte[] dataToEncrypt) throws NoSuchPaddingException, NoSuchAlgorithmException,
 			NoSuchProviderException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+		Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 		final SecretKeySpec keySpec = new SecretKeySpec(NetworkTrafficEncrypter.getEncryptionKey(), "AES");
-		final Cipher cipher = Cipher.getInstance("AES/ECB/PKCS7Padding", "BC");
+		final Cipher cipher = Cipher.getInstance("AES/ECB/PKCS7Padding");
 		cipher.init(1, keySpec);
 		final byte[] encryptedBytes = cipher.doFinal(dataToEncrypt);
 		return NetworkTrafficEncrypter.toHex(encryptedBytes);
