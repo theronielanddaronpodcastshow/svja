@@ -131,7 +131,6 @@ public abstract class RestAction extends BaseAction {
 	 *
 	 * @return
 	 */
-	@NotNull
 	@JsonProperty
 	public String getNonce() {
 		return this.nonce;
